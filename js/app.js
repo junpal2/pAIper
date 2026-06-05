@@ -1,0 +1,12 @@
+chatSessions = loadChatSessions();
+latexInput.value = initialLatex;
+setSendArrow("right");
+textMode.addEventListener("click", showSource);
+compileMode.addEventListener("click", () => showPreview());
+recompileButton.addEventListener("click", () => startCompile());
+terminalMode.addEventListener("click", () => showTerminal());
+railChat.addEventListener("click", openNewChat);
+railHistory.addEventListener("click", showHistory);
+closeChat.addEventListener("click", handleCloseChat);
+updateEditorView();
+autoSizePrompt();

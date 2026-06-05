@@ -6,6 +6,7 @@ const PORT = Number(process.env.PORT || 3000);
 const HOST = process.env.HOST || "127.0.0.1";
 const ROOT = __dirname;
 const MAX_BODY = 1024 * 1024;
+const INCLUDE_PATTERN = /<!--\s*include:([^>]+?)\s*-->/g;
 
 function sendJson(res, status, payload) {
   const body = JSON.stringify(payload);
@@ -69,6 +70,20 @@ async function handleCompile(req, res) {
   }
 }
 
+async function renderHtml(filePath) {
+  let html = await fs.readFile(filePath, "utf8");
+  const includes = [...html.matchAll(INCLUDE_PATTERN)];
+  for (const include of includes) {
+    const includePath = path.normalize(path.join(ROOT, include[1].trim()));
+    if (!includePath.startsWith(ROOT)) {
+      throw new Error("Invalid include path.");
+    }
+    const partial = await fs.readFile(includePath, "utf8");
+    html = html.replace(include[0], partial.trimEnd());
+  }
+  return Buffer.from(html);
+}
+
 async function serveStatic(req, res) {
   const requested = decodeURIComponent(new URL(req.url, `http://localhost:${PORT}`).pathname);
   const filePath = requested === "/" ? path.join(ROOT, "index.html") : path.join(ROOT, requested);
@@ -81,7 +96,9 @@ async function serveStatic(req, res) {
   }
 
   try {
-    const data = await fs.readFile(normalized);
+    const data = path.extname(normalized) === ".html"
+      ? await renderHtml(normalized)
+      : await fs.readFile(normalized);
     res.writeHead(200, { "content-type": contentType(normalized) });
     res.end(data);
   } catch {
