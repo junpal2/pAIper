@@ -73,20 +73,20 @@ h1 {
 .tutorial-btn {
   width: 24px;
   height: 24px;
-  border: 2px solid #9a9a9a;
-  border-radius: 1px;
+  border: 0;
+  border-radius: 0;
   background: transparent;
-  color: #8f8f8f;
   display: grid;
   place-items: center;
   padding: 0;
   cursor: pointer;
 }
 
-.tutorial-btn svg {
-  width: 14px;
-  height: 14px;
-  fill: currentColor;
+.tutorial-btn img {
+  width: 24px;
+  height: 24px;
+  display: block;
+  pointer-events: none;
 }
 
 .stage {
@@ -130,25 +130,10 @@ h1 {
   padding: 0;
 }
 
-.rail-btn svg {
+.rail-btn img {
   width: 24px;
   height: 24px;
-  stroke: currentColor;
-  fill: none;
-  stroke-width: 1.8;
-}
-
-.wand-sparkles {
-  fill: currentColor;
-  stroke: none;
-}
-
-.wand-stick {
-  fill: none;
-  stroke: currentColor;
-  stroke-width: 2.8;
-  stroke-linecap: round;
-  stroke-linejoin: round;
+  display: block;
 }
 
 .editor-shell {
@@ -206,12 +191,11 @@ h1 {
 }
 
 .zoom-caret {
-  width: 0;
-  height: 0;
-  border-left: 6px solid transparent;
-  border-right: 6px solid transparent;
-  border-top: 7px solid currentColor;
-  transform: translateY(1px);
+  width: 10px;
+  height: 15px;
+  display: block;
+  object-fit: contain;
+  transform: translateY(1px) scale(.82);
 }
 
 #zoomLabel {
@@ -258,12 +242,11 @@ h1 {
   box-shadow: inset 0 0 0 4px #747474;
 }
 
-.tool-btn svg {
+.tool-btn img {
   width: 19px;
   height: 19px;
-  stroke: currentColor;
-  fill: none;
-  stroke-width: 2;
+  display: block;
+  object-fit: contain;
 }
 
 .loading-dots {
@@ -632,7 +615,8 @@ h1 {
 .wand {
   width: 26px;
   height: 26px;
-  color: var(--blue);
+  display: block;
+  object-fit: contain;
   flex: 0 0 auto;
 }
 
@@ -654,10 +638,16 @@ h1 {
   background: transparent;
   width: 26px;
   height: 26px;
-  font-size: 27px;
-  line-height: 20px;
   cursor: pointer;
-  color: #111;
+  display: grid;
+  place-items: center;
+  padding: 0;
+}
+
+.close-chat img {
+  width: 21px;
+  height: 21px;
+  display: block;
 }
 
 .chat-body {
@@ -1060,6 +1050,13 @@ h1 {
   padding: 0;
 }
 
+.icon-button img {
+  width: 12px;
+  height: 12px;
+  display: block;
+  object-fit: contain;
+}
+
 #plus {
   grid-area: plus;
 }
@@ -1079,15 +1076,20 @@ h1 {
   transition: transform .12s ease, background .12s ease;
 }
 
-.send svg,
-.back svg {
+.send img,
+.back img {
   width: 18px;
   height: 18px;
-  stroke: currentColor;
-  stroke-width: 2.4;
-  stroke-linecap: round;
-  stroke-linejoin: round;
-  fill: none;
+  display: block;
+  object-fit: contain;
+}
+
+.send.arrow-right img {
+  transform: rotate(90deg);
+}
+
+.back img {
+  transform: rotate(-90deg);
 }
 
 .composer.reviewing .send {

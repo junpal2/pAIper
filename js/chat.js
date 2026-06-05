@@ -419,9 +419,7 @@
     }
 
     function setSendArrow(direction) {
-      sendButton.innerHTML = direction === "up"
-        ? '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 16V8"/><path d="m8 12 4-4 4 4"/></svg>'
-        : '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M8 12h8"/><path d="m12 8 4 4-4 4"/></svg>';
+      sendButton.classList.toggle("arrow-right", direction !== "up");
     }
 
     setSendArrow("right");
