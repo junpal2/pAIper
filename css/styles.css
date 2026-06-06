@@ -130,6 +130,12 @@ h1 {
   padding: 0;
 }
 
+.rail-btn.active {
+  background: #ececec;
+  color: #222;
+  box-shadow: inset 0 0 0 4px #747474;
+}
+
 .rail-btn img {
   width: 24px;
   height: 24px;
@@ -782,7 +788,6 @@ h1 {
 }
 
 .mock-result {
-  align-self: flex-start;
   display: flex;
   flex-direction: column;
   gap: 7px;
@@ -793,6 +798,14 @@ h1 {
   color: #1f1f1f;
   font-size: 12px;
   line-height: 1.25;
+}
+
+.bot-result-row {
+  align-self: flex-start;
+  display: flex;
+  align-items: flex-start;
+  gap: 7px;
+  max-width: 330px;
 }
 
 .mock-result h4 {
@@ -863,15 +876,12 @@ h1 {
 }
 
 .evidence-row {
-  display: grid;
-  grid-template-columns: 1fr 18px;
-  gap: 5px;
-  align-items: start;
+  display: block;
 }
 
-.evidence-button {
-  width: 18px;
-  height: 18px;
+.source-highlight-button {
+  width: 24px;
+  height: 24px;
   border: 0;
   background: transparent;
   color: #8b8b8b;
@@ -879,12 +889,13 @@ h1 {
   place-items: center;
   cursor: pointer;
   padding: 0;
-  transform: translateY(-1px);
+  flex: 0 0 auto;
+  margin-top: 8px;
 }
 
-.evidence-button svg {
-  width: 15px;
-  height: 15px;
+.source-highlight-button svg {
+  width: 18px;
+  height: 18px;
   stroke: currentColor;
   fill: none;
   stroke-width: 1.7;
@@ -892,7 +903,7 @@ h1 {
   stroke-linejoin: round;
 }
 
-.evidence-button.active {
+.source-highlight-button.active {
   color: #a87900;
 }
 
@@ -1014,11 +1025,11 @@ h1 {
 
 .composer {
   order: 3;
-  min-height: 45px;
+  min-height: 60px;
   border: 1px dashed #777;
   border-radius: 13px;
   display: grid;
-  grid-template-columns: 30px 1fr 34px;
+  grid-template-columns: 34px 1fr 34px;
   grid-template-areas: "plus input send";
   align-items: end;
   gap: 4px;
@@ -1028,7 +1039,7 @@ h1 {
 
 .composer.reviewing {
   min-height: 170px;
-  grid-template-columns: 30px 1fr;
+  grid-template-columns: 34px 1fr;
   grid-template-areas:
     "input input"
     "plus actions";
@@ -1061,6 +1072,11 @@ h1 {
   grid-area: plus;
 }
 
+#plus img {
+  width: 20px;
+  height: 20px;
+}
+
 .send {
   grid-area: send;
   width: 32px;
@@ -1076,20 +1092,19 @@ h1 {
   transition: transform .12s ease, background .12s ease;
 }
 
-.send img,
-.back img {
+.send img {
   width: 18px;
   height: 18px;
   display: block;
   object-fit: contain;
 }
 
-.send.arrow-right img {
-  transform: rotate(90deg);
+.send img {
+  transform: rotate(-90deg);
 }
 
-.back img {
-  transform: rotate(-90deg);
+.send.arrow-right img {
+  transform: none;
 }
 
 .composer.reviewing .send {
@@ -1108,8 +1123,7 @@ h1 {
   display: flex;
 }
 
-.send:hover,
-.back:hover {
+.send:hover {
   background: #c7c7c7;
   transform: translateY(-1px);
 }
@@ -1117,14 +1131,15 @@ h1 {
 .prompt-input {
   grid-area: input;
   width: 100%;
-  min-height: 26px;
+  height: 44px;
+  min-height: 44px;
   max-height: 164px;
   resize: none;
   border: 0;
   outline: 0;
-  padding: 5px 0 1px;
+  padding: 5px 0 2px;
   color: #1f1f1f;
-  font: 14px/1.16 Arial, Helvetica, sans-serif;
+  font: 14px/1.22 Arial, Helvetica, sans-serif;
   overflow: auto;
   scrollbar-width: thin;
 }
@@ -1291,6 +1306,18 @@ h1 {
   cursor: pointer;
 }
 
+.guard-options .locked-option label {
+  color: #8d8d8d;
+  cursor: default;
+}
+
+.default-option-note {
+  margin: 2px 0 6px 15px;
+  color: #777;
+  font-size: 10.5px;
+  line-height: 1.18;
+}
+
 .guard-options input {
   appearance: none;
   width: 10px;
@@ -1302,11 +1329,22 @@ h1 {
   margin: 0;
 }
 
+.guard-options input:checked {
+  border-color: #1f74e6;
+  background: #1f74e6;
+}
+
 .guard-options input:checked::after {
   content: "✓";
   font-size: 11px;
-  color: #333;
+  color: #fff;
   transform: translateY(-1px);
+}
+
+.guard-options input:disabled {
+  border-color: #aaa;
+  background: #d5d5d5;
+  cursor: not-allowed;
 }
 
 .custom-lens {
@@ -1322,26 +1360,8 @@ h1 {
 .guard-actions {
   display: flex;
   align-items: center;
-  justify-content: space-between;
+  justify-content: flex-end;
   margin-top: 4px;
-}
-
-.back {
-  border: 0;
-  width: 31px;
-  height: 31px;
-  border-radius: 50%;
-  background: #d7d7d7;
-  color: #151515;
-  display: grid;
-  place-items: center;
-  font-size: 21px;
-  font-weight: 700;
-  line-height: 1;
-  cursor: pointer;
-  padding: 0;
-  box-shadow: 0 1px 3px rgba(0, 0, 0, .15);
-  transition: transform .12s ease, background .12s ease;
 }
 
 .apply {

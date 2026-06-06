@@ -1,6 +1,8 @@
 chatSessions = loadChatSessions();
 latexInput.value = initialLatex;
 setSendArrow("right");
+setActive(textMode);
+setChatRailActive(railChat);
 textMode.addEventListener("click", showSource);
 compileMode.addEventListener("click", () => showPreview());
 recompileButton.addEventListener("click", () => startCompile());

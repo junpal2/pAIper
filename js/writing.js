@@ -11,18 +11,18 @@
     }
 
     function highlightLatex(source) {
+      const sourceHighlightTargets = getSourceHighlightTargets();
       return source.split("\n").map((line) => {
         const commentIndex = line.indexOf("%");
         const body = commentIndex >= 0 ? line.slice(0, commentIndex) : line;
         const comment = commentIndex >= 0 ? line.slice(commentIndex) : "";
         let html = escapeHTML(body);
-        const citationTarget = getCitationTargetText(activeCitationName);
-        if (citationTarget) {
+        sourceHighlightTargets.forEach((target) => {
           html = html.replaceAll(
-            escapeHTML(citationTarget),
-            `<span class="citation-hit">${escapeHTML(citationTarget)}</span>`
+            escapeHTML(target),
+            `<span class="citation-hit">${escapeHTML(target)}</span>`
           );
-        }
+        });
 
         html = html.replace(/(\\(?:documentclass|usepackage|begin|end|newcommand|renewcommand))(?=({|\\s|$))/g, '<span class="syn-struct">$1</span>');
         html = html.replace(/(\\(?:title|author|date|section|subsection|textbf|item|maketitle|includegraphics))(?=({|\\s|$))/g, '<span class="syn-command">$1</span>');
@@ -34,6 +34,17 @@
         }
         return html || " ";
       }).join("\n");
+    }
+
+    function getSourceHighlightTargets() {
+      const targetText = activeSourceText || getCitationTargetText(activeCitationName);
+      if (!targetText) return [];
+      return [...new Set(
+        targetText
+          .split("\n")
+          .map(line => line.trim())
+          .filter(Boolean)
+      )].sort((a, b) => b.length - a.length);
     }
 
     function measureLineHeight(line, width) {
@@ -133,6 +144,24 @@
         /By using gaze behavior as an interaction signal, FocusFlow seeks to support a more personalized and dynamic form of attention assistance\./g,
         "<span data-cite=\"responsive\">By using gaze behavior as an interaction signal, FocusFlow seeks to support a more personalized and dynamic form of attention assistance.</span>"
       );
+      html = markActiveSourceText(text, html);
+      return html;
+    }
+
+    function markActiveSourceText(text, html) {
+      if (!activeSourceText) return html;
+      const activeText = stripLatex(activeSourceText);
+      const paragraphText = text.replace(/\s+/g, " ").trim();
+      if (!activeText || !paragraphText) return html;
+      if (activeText.includes(paragraphText)) {
+        return `<span class="citation-hit">${html}</span>`;
+      }
+      if (paragraphText.includes(activeText)) {
+        return html.replaceAll(
+          escapeHTML(activeText),
+          `<span class="citation-hit">${escapeHTML(activeText)}</span>`
+        );
+      }
       return html;
     }
 
@@ -168,7 +197,7 @@
     }
 
     function canAddContext() {
-      const chatBoxOpen = !chat.classList.contains("closed") && chatTitle.textContent === "Chat Box";
+      const chatBoxOpen = !chat.classList.contains("closed") && chatTitle.textContent === AI_CHAT_TITLE;
       return chatBoxOpen && textMode.classList.contains("active") && sourcePane.style.display !== "none";
     }
 
@@ -279,7 +308,7 @@
     });
 
     function addContextChip(text) {
-      showChat("Chat Box");
+      showChat();
       composerShell.style.display = "flex";
       if (!contexts.includes(text)) contexts.unshift(text);
       renderContext();

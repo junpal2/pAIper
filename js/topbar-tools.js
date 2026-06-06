@@ -1,12 +1,20 @@
     function setActive(button) {
-      toolButtons.forEach(item => item.classList.toggle("active", item === button));
+      if (toolButtons.includes(button)) {
+        toolButtons.forEach(item => item.classList.toggle("active", item === button));
+      }
     }
 
-    function showChat(title = "Chat Box") {
+    function setChatRailActive(button) {
+      railChat.classList.toggle("active", button === railChat);
+      railHistory.classList.toggle("active", button === railHistory);
+    }
+
+    function showChat(title = AI_CHAT_TITLE) {
       chat.classList.remove("closed");
       chat.classList.toggle("history-open", title === "Chat History");
       stage.classList.remove("chat-hidden");
       chatTitle.textContent = title;
+      setChatRailActive(title === "Chat History" ? railHistory : railChat);
     }
 
     function clearContextSelection() {
@@ -28,6 +36,7 @@
       stage.classList.add("chat-hidden");
       clearContextSelection();
       closePlusMenu();
+      setChatRailActive(null);
       setActive(activeButton);
     }
 

@@ -28,7 +28,6 @@
     const guardTip = document.getElementById("guardTip");
     const guardPanel = document.getElementById("guardPanel");
     const applyGuard = document.getElementById("applyGuard");
-    const guardBack = document.getElementById("guardBack");
     const lensInfoToggle = document.getElementById("lensInfoToggle");
     const lensInfoPanel = document.getElementById("lensInfoPanel");
     const customLensInput = document.getElementById("customLensInput");
@@ -47,6 +46,7 @@
     const zoomOptions = [...document.querySelectorAll(".zoom-option")];
     const toolButtons = [textMode, compileMode, terminalMode];
     const checks = [...document.querySelectorAll(".guard-options input")];
+    const AI_CHAT_TITLE = "pAIper AI";
 
     const initialLatex = `\\documentclass{article}
 \\usepackage{graphicx} % Required for inserting images
@@ -103,6 +103,7 @@ Our work is motivated by the idea that distraction management should be responsi
     let lastSentPrompt = "";
     let lastMockResult = null;
     let activeCitationName = "";
+    let activeSourceText = "";
     const HISTORY_STORAGE_KEY = "wrtEvalChatSessions";
     let chatSessions = [];
     let currentMessages = [];

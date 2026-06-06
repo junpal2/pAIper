@@ -20,11 +20,6 @@
     document.addEventListener("click", (event) => {
       if (!plusMenu.contains(event.target) && event.target !== plus) closePlusMenu();
     });
-    guardBack.addEventListener("click", () => {
-      guardPanel.classList.remove("open");
-      chatFlowState = "compose";
-      setComposerReviewMode(false);
-    });
     checks.forEach(check => {
       check.addEventListener("change", () => {
         updateSelectedLensState();
@@ -33,6 +28,13 @@
     customLensInput.addEventListener("input", () => {
       if (chatFlowState === "lens") updateSelectedLensState();
     });
+
+    function resetLensChecks() {
+      checks.forEach((item) => {
+        item.checked = item.disabled;
+      });
+      selectedLens = checks.filter(item => item.checked).map(item => item.value);
+    }
 
     applyGuard.addEventListener("click", () => {
       if (!validateLensSelection()) return;
@@ -51,8 +53,7 @@
         originalPrompt = "";
         rewrittenPrompt = "";
         if (!safetyLensVisited) {
-          selectedLens = [];
-          checks.forEach(item => item.checked = false);
+          resetLensChecks();
         }
       }
       setSendArrow(safetyLensVisited ? "up" : "right");
@@ -61,12 +62,19 @@
 
     function autoSizePrompt() {
       const isReviewing = composer.classList.contains("reviewing");
-      const minPromptHeight = isReviewing ? 122 : 26;
+      const minPromptHeight = isReviewing ? 122 : 44;
       const maxPromptHeight = isReviewing ? 360 : 164;
+      if (!isReviewing && !promptBox.value.trim()) {
+        promptBox.style.height = `${minPromptHeight}px`;
+        promptBox.style.overflowY = "hidden";
+        promptBox.scrollTop = 0;
+        return;
+      }
       promptBox.style.height = `${minPromptHeight}px`;
       const nextHeight = Math.min(Math.max(promptBox.scrollHeight, minPromptHeight), maxPromptHeight);
       promptBox.style.height = `${nextHeight}px`;
       promptBox.style.overflowY = promptBox.scrollHeight > maxPromptHeight ? "auto" : "hidden";
+      if (!promptBox.value.trim()) promptBox.scrollTop = 0;
     }
 
     function getLensDefinition(id) {
@@ -76,7 +84,7 @@
     function getSelectedPaperText() {
       return contexts.length
         ? contexts.join("\n\n")
-        : "No specific paper section was added as context.";
+        : latexInput.value;
     }
 
     function getAppliedLensDefinitions(selectedLensIds) {
@@ -193,8 +201,8 @@
         </svg>`;
     }
 
-    function clearEvidenceButtons() {
-      chatBody.querySelectorAll(".evidence-button").forEach((button) => {
+    function clearSourceHighlightButtons() {
+      chatBody.querySelectorAll(".source-highlight-button").forEach((button) => {
         button.classList.remove("active");
         button.innerHTML = eyeIcon(true);
       });
@@ -202,50 +210,49 @@
 
     function clearCitationHighlight() {
       activeCitationName = "";
+      activeSourceText = "";
       compiledPaper.querySelectorAll(".citation-hit").forEach(node => node.classList.remove("citation-hit"));
+      renderPreview(lastCompiledSource);
       updateHighlight();
     }
 
     function applyCitationHighlight() {
       compiledPaper.querySelectorAll(".citation-hit").forEach(node => node.classList.remove("citation-hit"));
+      renderPreview(lastCompiledSource);
       updateHighlight();
       if (!activeCitationName) return;
       const target = compiledPaper.querySelector(`[data-cite="${activeCitationName}"]`);
       if (target) target.classList.add("citation-hit");
     }
 
-    function createEvidenceButton(citeName) {
+    function createSourceHighlightButton(sourceText) {
       const button = document.createElement("button");
       button.type = "button";
-      button.className = "evidence-button";
-      button.setAttribute("aria-label", "Show source context");
+      button.className = "source-highlight-button";
+      button.setAttribute("aria-label", "Highlight source used for this answer");
       button.innerHTML = eyeIcon(true);
       button.addEventListener("click", (event) => {
         event.stopPropagation();
         const isActive = button.classList.contains("active");
         if (isActive) {
-          clearEvidenceButtons();
+          clearSourceHighlightButtons();
           clearCitationHighlight();
           return;
         }
-        clearEvidenceButtons();
+        clearSourceHighlightButtons();
         button.classList.add("active");
         button.innerHTML = eyeIcon(false);
-        highlightCitation(citeName);
+        highlightSourceText(sourceText);
       });
       return button;
     }
 
-    function appendEvidenceText(parent, text, options = {}) {
+    function appendEvidenceText(parent, text) {
       const row = document.createElement("div");
       row.className = "evidence-row";
       const content = document.createElement("span");
       content.textContent = text;
       row.appendChild(content);
-      const citeName = Object.prototype.hasOwnProperty.call(options, "cite")
-        ? options.cite
-        : (options.autoCite === false ? "" : inferCitationTarget(text));
-      if (citeName) row.appendChild(createEvidenceButton(citeName));
       parent.appendChild(row);
     }
 
@@ -273,15 +280,8 @@
       const section = document.createElement("section");
       section.className = "result-section direct-answer";
       const blocks = text.split(/\n\s*\n/).map(block => block.trim()).filter(Boolean);
-      let evidenceButtonCount = 0;
       const appendDirectText = (parent, line) => {
-        const shouldShowEvidence = evidenceButtonCount < 4
-          && /attention|notification|visual stimuli|irrelevant content|digital distraction|reading|writing|studying|manual settings|do not disturb|static|user-controlled|automated|intervention/i.test(line);
-        const citeTarget = /manual settings|do not disturb|static|user-controlled|automated|intervention/i.test(line)
-          ? "existing-approaches"
-          : "intro-distraction";
-        appendEvidenceText(parent, line, { cite: shouldShowEvidence ? citeTarget : "" });
-        if (shouldShowEvidence) evidenceButtonCount += 1;
+        appendEvidenceText(parent, line);
       };
       blocks.forEach((block) => {
         const lines = block.split("\n").map(line => line.trim()).filter(Boolean);
@@ -310,12 +310,15 @@
     }
 
     function renderMockResult(result) {
+      const row = document.createElement("div");
+      row.className = "bot-result-row";
       const card = document.createElement("div");
       card.className = "mock-result";
 
       if (result.directAnswer) {
         card.appendChild(renderDirectAnswer(result.directAnswer));
-        return card;
+        row.append(card, createSourceHighlightButton(result.selectedText || ""));
+        return row;
       }
 
       const main = document.createElement("section");
@@ -349,11 +352,12 @@
       appendList(unsupported, result.unsupportedClaimsToAvoid);
       card.appendChild(unsupported);
 
-      return card;
+      row.append(card, createSourceHighlightButton(result.selectedText || ""));
+      return row;
     }
 
     sendButton.addEventListener("click", () => {
-      showChat("Chat Box");
+      showChat();
       composerShell.style.display = "flex";
       if (!promptBox.value.trim()) {
         promptBox.focus();
@@ -383,7 +387,7 @@
       closePlusMenu();
       guardTip.style.display = "none";
       setComposerReviewMode(false);
-      showChat("Chat Box");
+      showChat();
       composerShell.style.display = "flex";
       if (chatFlowState !== "lens") {
         originalPrompt = promptBox.value.trim() || userPrompt;
@@ -438,8 +442,7 @@
     declineRewrite.addEventListener("click", () => {
       promptBox.value = originalPrompt || "";
       rewrittenPrompt = "";
-      selectedLens = [];
-      checks.forEach(item => item.checked = false);
+      resetLensChecks();
       lensValidation.style.display = "none";
       safetyLensVisited = true;
       chatFlowState = "ready";
@@ -658,11 +661,14 @@
       chatFlowState = "compose";
       originalPrompt = "";
       rewrittenPrompt = "";
-      selectedLens = [];
-      checks.forEach(item => item.checked = false);
+      resetLensChecks();
+      activeCitationName = "";
+      activeSourceText = "";
       contexts.splice(0, contexts.length);
       renderContext();
       chatBody.innerHTML = "";
+      clearSourceHighlightButtons();
+      clearCitationHighlight();
       promptBox.value = "";
       setComposerReviewMode(false);
       setSendArrow("right");
@@ -672,7 +678,7 @@
 
     function openNewChat() {
       resetCurrentChat();
-      showChat("Chat Box");
+      showChat();
       composerShell.style.display = "flex";
       setActive(textMode);
       promptBox.focus();
@@ -694,13 +700,15 @@
       chatFlowState = "compose";
       originalPrompt = "";
       rewrittenPrompt = "";
-      selectedLens = [];
-      checks.forEach(item => item.checked = false);
+      resetLensChecks();
+      activeCitationName = "";
+      activeSourceText = "";
       promptBox.value = "";
       setComposerReviewMode(false);
       setSendArrow("up");
       guardPanel.classList.remove("open");
-      showChat("Chat Box");
+      clearCitationHighlight();
+      showChat();
       composerShell.style.display = "flex";
       renderConversation();
       autoSizePrompt();
@@ -716,7 +724,8 @@
 
     function highlightCitation(name) {
       activeCitationName = name;
-      showChat("Chat Box");
+      activeSourceText = "";
+      showChat();
       composerShell.style.display = "flex";
       applyCitationHighlight();
       const targetText = getCitationTargetText(name);
@@ -729,7 +738,7 @@
         updateHighlight();
       } else if (targetIndex >= 0) {
         showSource({ hideChat: false });
-        showChat("Chat Box");
+        showChat();
         composerShell.style.display = "flex";
         const before = latexInput.value.slice(0, targetIndex);
         const line = before.split("\n").length - 1;
@@ -737,6 +746,31 @@
         lineNumbers.scrollTop = latexInput.scrollTop;
         updateHighlight();
       }
+    }
+
+    function highlightSourceText(sourceText) {
+      activeCitationName = "";
+      activeSourceText = sourceText;
+      showChat();
+      composerShell.style.display = "flex";
+      applyCitationHighlight();
+
+      const targetIndex = latexInput.value.indexOf(sourceText);
+      const fallbackTarget = targetIndex >= 0
+        ? ""
+        : sourceText.split("\n").map(line => line.trim()).find(line => line && latexInput.value.includes(line));
+      const scrollIndex = targetIndex >= 0 ? targetIndex : (fallbackTarget ? latexInput.value.indexOf(fallbackTarget) : -1);
+      if (scrollIndex < 0) return;
+      if (sourcePane.style.display === "none") {
+        showSource({ hideChat: false });
+        showChat();
+        composerShell.style.display = "flex";
+      }
+      const before = latexInput.value.slice(0, scrollIndex);
+      const line = before.split("\n").length - 1;
+      latexInput.scrollTop = Math.max(0, line * 24 - 120);
+      lineNumbers.scrollTop = latexInput.scrollTop;
+      updateHighlight();
     }
 
     function showHistory() {

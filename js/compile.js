@@ -109,6 +109,24 @@
         /By using gaze behavior as an interaction signal, FocusFlow seeks to support a more personalized and dynamic form of attention assistance\./g,
         "<span data-cite=\"responsive\">By using gaze behavior as an interaction signal, FocusFlow seeks to support a more personalized and dynamic form of attention assistance.</span>"
       );
+      html = markActiveSourceText(text, html);
+      return html;
+    }
+
+    function markActiveSourceText(text, html) {
+      if (!activeSourceText) return html;
+      const activeText = stripLatex(activeSourceText);
+      const paragraphText = text.replace(/\s+/g, " ").trim();
+      if (!activeText || !paragraphText) return html;
+      if (activeText.includes(paragraphText)) {
+        return `<span class="citation-hit">${html}</span>`;
+      }
+      if (paragraphText.includes(activeText)) {
+        return html.replaceAll(
+          escapeHTML(activeText),
+          `<span class="citation-hit">${escapeHTML(activeText)}</span>`
+        );
+      }
       return html;
     }
 

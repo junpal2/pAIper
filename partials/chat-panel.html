@@ -1,8 +1,8 @@
-    <aside class="chat closed" id="chat" aria-label="Chat Box">
+    <aside class="chat" id="chat" aria-label="pAIper AI">
       <div class="chat-head">
         <img class="wand chat-wand-icon" src="assets/icons/chatbox-button.svg" alt="">
         <img class="wand chat-history-icon" src="assets/icons/fi-rr-time-past.svg" alt="">
-        <span id="chatTitle">Chat Box</span>
+        <span id="chatTitle">pAIper AI</span>
         <button class="close-chat" id="closeChat" type="button" aria-label="Close">
           <img src="assets/icons/fi-rr-cross-small.svg" alt="">
         </button>
@@ -11,7 +11,7 @@
       <div class="composer-shell" id="composerShell">
         <div class="guard-panel" id="guardPanel">
           <div class="guard-title">
-            <span>Safety Lens Options</span><button class="lens-info-toggle" id="lensInfoToggle" type="button" aria-label="Show safety lens explanations">ⓘ</button><small>*Select all that apply</small>
+            <span>Prompt Enhancement Options</span><button class="lens-info-toggle" id="lensInfoToggle" type="button" aria-label="Show prompt enhancement explanations">ⓘ</button><small>*Select all that apply</small>
           </div>
           <div class="lens-info-panel" id="lensInfoPanel">
             <p><strong>Source &amp; Citation Verification:</strong> Checks whether cited sources and evidence are real and relevant.</p>
@@ -22,8 +22,9 @@
             <p><strong>Ethical Bias &amp; Representation:</strong> Checks whether outputs reflect cultural, demographic, or ideological bias.</p>
           </div>
           <ul class="guard-options">
-            <li><label><input type="checkbox" value="source-citation">Source &amp; Citation Verification Lens</label></li>
-            <li><label><input type="checkbox" value="hallucination">Hallucination Detection Lens</label></li>
+            <li class="locked-option"><label><input type="checkbox" value="source-citation" checked disabled>Source &amp; Citation Verification Lens</label></li>
+            <li class="locked-option"><label><input type="checkbox" value="hallucination" checked disabled>Hallucination Detection Lens</label></li>
+            <li class="default-option-note">Default options are auto-applied. Select more below to further refine your prompt.</li>
             <li><label><input type="checkbox" value="assumption">Assumption Challenge Lens</label></li>
             <li><label><input type="checkbox" value="over-reliance">Over-reliance Prevention Lens</label></li>
             <li><label><input type="checkbox" value="privacy">Privacy &amp; Confidentiality Lens</label></li>
@@ -33,13 +34,10 @@
           <input class="custom-lens" id="customLensInput" type="text" placeholder="Enter ...">
           <div class="lens-validation" id="lensValidation"></div>
           <div class="guard-actions">
-            <button class="back" id="guardBack" type="button" aria-label="Back">
-              <img src="assets/icons/fi-rr-arrow-small-up.svg" alt="">
-            </button>
             <button class="apply" id="applyGuard" type="button">Apply</button>
           </div>
         </div>
-        <span class="guard-tip" id="guardTip">Set safety lens options</span>
+        <span class="guard-tip" id="guardTip">Set prompt enhancement options</span>
         <div class="plus-menu" id="plusMenu">
           <button id="addFilesOption" type="button">
             <svg viewBox="0 0 24 24" aria-hidden="true">
@@ -56,15 +54,15 @@
               <path d="M13 13h7"/>
               <path d="M13 19h7"/>
             </svg>
-            <span>Set safety lens options</span>
+            <span>Set prompt enhancement options</span>
           </button>
         </div>
         <div class="context-list" id="contextList"></div>
         <div class="composer">
-          <button class="icon-button" id="plus" type="button" aria-label="Add safety lens">
+          <button class="icon-button" id="plus" type="button" aria-label="Add prompt enhancement option">
             <img src="assets/icons/fi-rr-plus-small.svg" alt="">
           </button>
-          <textarea class="prompt-input" id="prompt" rows="1" placeholder="Enter ..."></textarea>
+          <textarea class="prompt-input" id="prompt" rows="2" placeholder="Highlight or paste text from your paper to ask about it."></textarea>
           <button class="icon-button send" id="send" type="button" aria-label="Send">
             <img src="assets/icons/fi-rr-arrow-small-up.svg" alt="">
           </button>
