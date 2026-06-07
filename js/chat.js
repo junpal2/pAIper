@@ -14,6 +14,11 @@
       closePlusMenu();
       openLensOptions();
     });
+    guardBack.addEventListener("click", () => {
+      guardPanel.classList.remove("open");
+      lensValidation.style.display = "none";
+      promptBox.focus();
+    });
     lensInfoToggle.addEventListener("click", () => {
       lensInfoPanel.classList.toggle("open");
     });
@@ -62,7 +67,7 @@
 
     function autoSizePrompt() {
       const isReviewing = composer.classList.contains("reviewing");
-      const minPromptHeight = isReviewing ? 122 : 44;
+      const minPromptHeight = isReviewing ? 122 : 30;
       const maxPromptHeight = isReviewing ? 360 : 164;
       if (!isReviewing && !promptBox.value.trim()) {
         promptBox.style.height = `${minPromptHeight}px`;
@@ -455,7 +460,10 @@
     function contextPreview(text) {
       const chip = document.createElement("div");
       chip.className = "context-chip";
-      chip.textContent = textClip(text);
+      const label = document.createElement("span");
+      label.className = "context-chip-text";
+      label.textContent = textClip(text, 190);
+      chip.appendChild(label);
       chip.addEventListener("click", () => highlightCitation(text.includes("personalized") ? "responsive" : "gaze"));
       const x = document.createElement("button");
       x.className = "remove-chip";
@@ -715,11 +723,21 @@
     }
 
     function handleCloseChat() {
-      if (!chat.classList.contains("history-open")) {
+      saveCurrentSession();
+      showPreview();
+    }
+
+    function toggleAIPanel() {
+      if (rightPane.classList.contains("ai-mode") || rightPane.classList.contains("history-mode")) {
         saveCurrentSession();
-        resetCurrentChat();
+        showPreview();
+        return;
       }
-      showSource();
+      showChat();
+      composerShell.style.display = "flex";
+      if (currentMessages.length) renderConversation();
+      autoSizePrompt();
+      promptBox.focus();
     }
 
     function highlightCitation(name) {

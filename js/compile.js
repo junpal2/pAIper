@@ -18,9 +18,10 @@
     }
 
     function finishCompile(shouldHideChat) {
-      editorShell.classList.remove("log-mode", "source-mode");
+      editorShell.classList.remove("log-mode");
       editorShell.classList.add("preview-mode");
       lastCompiledSource = latexInput.value;
+      currentPdfPage = 1;
       renderPreview(lastCompiledSource);
       lastCompileLog = [
         "This is pdfTeX, Version 3.141592653-2.6-1.40.26 (prototype)",
@@ -37,40 +38,38 @@
       compileStrip.classList.remove("compiling");
       recompileButton.disabled = false;
       isCompiling = false;
-      if (shouldHideChat) hideChat(compileMode);
+      if (shouldHideChat) setRightPaneMode("pdf");
     }
 
     function startCompile(options = {}) {
       if (isCompiling) return;
       const shouldHideChat = options.hideChat !== false;
       isCompiling = true;
-      stage.classList.remove("source-active");
       setActive(compileMode);
-      editorShell.classList.remove("source-mode", "log-mode");
+      editorShell.classList.remove("log-mode");
       editorShell.classList.add("preview-mode");
-      sourcePane.style.display = "none";
-      previewPane.style.display = "block";
+      sourcePane.style.display = "grid";
       mainLogPane.style.display = "none";
       compiledPaper.style.display = "block";
       pdfFrame.style.display = "none";
       compiledPaper.innerHTML = '<p class="compiled-body">Compiling LaTeX source...</p>';
       compileStrip.classList.add("compiling");
       recompileButton.disabled = true;
-      if (shouldHideChat) hideChat(compileMode);
+      if (shouldHideChat) setRightPaneMode("pdf");
       setTimeout(() => finishCompile(shouldHideChat), 4000);
     }
 
     function showPreview(options = {}) {
-      stage.classList.remove("source-active");
+      lastCompiledSource = latexInput.value;
+      currentPdfPage = 1;
       setActive(compileMode);
-      editorShell.classList.remove("source-mode", "log-mode");
+      editorShell.classList.remove("log-mode");
       editorShell.classList.add("preview-mode");
-      sourcePane.style.display = "none";
-      previewPane.style.display = "block";
+      sourcePane.style.display = "grid";
       mainLogPane.style.display = "none";
       compiledPaper.style.display = "block";
       pdfFrame.style.display = "none";
-      if (options.hideChat !== false) hideChat(compileMode);
+      if (options.hideChat !== false) setRightPaneMode("pdf");
       renderPreview(lastCompiledSource);
       applyCitationHighlight();
     }
@@ -130,28 +129,52 @@
       return html;
     }
 
-    function renderPreview(source = lastCompiledSource) {
+    function buildPreviewPages(source) {
       const title = stripLatex(matchLatex("title", source)) || "Untitled";
       const author = stripLatex(matchLatex("author", source));
       const date = stripLatex(matchLatex("date", source));
       const abstract = stripLatex(matchEnvironment("abstract", source));
       const afterAbstract = source.split(/\\end\{abstract\}/)[1] || source;
       const sectionParts = afterAbstract.split(/\\section\{([^{}]+)\}/g).slice(1);
+      const pages = [];
 
-      let html = `<h2 class="compiled-title">${escapeHTML(title)}</h2>`;
-      if (author) html += `<div class="compiled-authors">${escapeHTML(author)}</div>`;
-      if (date) html += `<div class="compiled-date">${escapeHTML(date)}</div>`;
+      let firstPage = `<h2 class="compiled-title">${escapeHTML(title)}</h2>`;
+      if (author) firstPage += `<div class="compiled-authors">${escapeHTML(author)}</div>`;
+      if (date) firstPage += `<div class="compiled-date">${escapeHTML(date)}</div>`;
       if (abstract) {
-        html += `<div class="abstract-title">Abstract</div><p class="compiled-abstract">${markCitations(abstract)}</p>`;
+        firstPage += `<div class="abstract-title">Abstract</div><p class="compiled-abstract">${markCitations(abstract)}</p>`;
+      }
+
+      if (!sectionParts.length) {
+        pages.push(firstPage);
+        return pages;
       }
 
       for (let i = 0; i < sectionParts.length; i += 2) {
         const sectionTitle = stripLatex(sectionParts[i]);
         const body = stripLatex(sectionParts[i + 1] || "");
         if (!sectionTitle) continue;
-        html += `<h3 class="compiled-section"><span>${i / 2 + 1}</span><span>${escapeHTML(sectionTitle)}</span></h3>`;
-        if (body) html += `<p class="compiled-body">${markCitations(body)}</p>`;
+        let page = i === 0 ? firstPage : "";
+        page += `<h3 class="compiled-section"><span>${i / 2 + 1}</span><span>${escapeHTML(sectionTitle)}</span></h3>`;
+        if (body) page += `<p class="compiled-body">${markCitations(body)}</p>`;
+        pages.push(page);
       }
 
-      compiledPaper.innerHTML = html;
+      return pages.length ? pages : [firstPage];
+    }
+
+    function updatePdfNav() {
+      totalPdfPages = Math.max(previewPages.length, 1);
+      currentPdfPage = Math.min(Math.max(currentPdfPage, 1), totalPdfPages);
+      pdfPageLabel.textContent = `${currentPdfPage} / ${totalPdfPages}`;
+      pdfPrevButton.disabled = currentPdfPage <= 1;
+      pdfNextButton.disabled = currentPdfPage >= totalPdfPages;
+      pdfPrevButton.classList.toggle("muted", pdfPrevButton.disabled);
+      pdfNextButton.classList.toggle("muted", pdfNextButton.disabled);
+    }
+
+    function renderPreview(source = lastCompiledSource) {
+      previewPages = buildPreviewPages(source);
+      updatePdfNav();
+      compiledPaper.innerHTML = previewPages[currentPdfPage - 1] || "";
     }

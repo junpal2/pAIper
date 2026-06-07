@@ -1,5 +1,7 @@
     const stage = document.getElementById("stage");
     const editorShell = document.querySelector(".editor-shell");
+    const workspaceBody = document.querySelector(".workspace-body");
+    const rightPane = document.getElementById("rightPane");
     const sourcePane = document.getElementById("sourcePane");
     const previewPane = document.getElementById("previewPane");
     const pdfFrame = document.getElementById("pdfFrame");
@@ -27,6 +29,7 @@
     const openLensOption = document.getElementById("openLensOption");
     const guardTip = document.getElementById("guardTip");
     const guardPanel = document.getElementById("guardPanel");
+    const guardBack = document.getElementById("guardBack");
     const applyGuard = document.getElementById("applyGuard");
     const lensInfoToggle = document.getElementById("lensInfoToggle");
     const lensInfoPanel = document.getElementById("lensInfoPanel");
@@ -38,6 +41,20 @@
     const terminalMode = document.getElementById("terminalMode");
     const railChat = document.getElementById("railChat");
     const railHistory = document.getElementById("railHistory");
+    const fileRail = document.getElementById("fileRail");
+    const fileAddButton = document.getElementById("fileAddButton");
+    const latexFileInput = document.getElementById("latexFileInput");
+    const splitResizer = document.getElementById("splitResizer");
+    const pdfPrevButton = document.getElementById("pdfPrevButton");
+    const pdfNextButton = document.getElementById("pdfNextButton");
+    const pdfPageLabel = document.getElementById("pdfPageLabel");
+    const activeFileName = document.getElementById("activeFileName");
+    const sourceTabName = document.getElementById("sourceTabName");
+    const sourceZoomSlot = document.getElementById("sourceZoomSlot");
+    const switchPaneIcon = document.getElementById("switchPaneIcon");
+    const switchPaneLabel = document.getElementById("switchPaneLabel");
+    const rightModeTitleIcon = document.getElementById("rightModeTitleIcon");
+    const rightModeTitleText = document.getElementById("rightModeTitleText");
     const compileStrip = document.getElementById("compileStrip");
     const recompileButton = document.getElementById("recompileButton");
     const zoomButton = document.getElementById("zoomButton");
@@ -112,6 +129,9 @@ Our work is motivated by the idea that distraction management should be responsi
     let lastCompiledSource = initialLatex;
     let lastPdfUrl = "";
     let isCompiling = false;
+    let currentPdfPage = 1;
+    let totalPdfPages = 1;
+    let previewPages = [];
     const zoomLevels = [75, 100, 125, 150];
     let currentZoom = 100;
 

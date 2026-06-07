@@ -12,15 +12,71 @@
   <main class="stage source-active" id="stage">
     <section class="editor-shell source-mode" aria-label="LaTeX paper editor">
       <!-- include:partials/editor-toolbar.html -->
-      <!-- include:partials/compile-panel.html -->
-      <!-- include:partials/writing-panel.html -->
-      <!-- include:partials/preview-panel.html -->
-      <!-- include:partials/terminal-panel.html -->
+
+      <div class="workspace-body">
+        <aside class="workspace-rail" aria-label="Workspace navigation">
+          <button class="side-rail-btn" id="fileRail" type="button" title="Add LaTeX file">
+            <img src="assets/icons/fi-rr-file.svg" alt="">
+          </button>
+          <input id="latexFileInput" class="file-input" type="file" accept=".tex,text/x-tex,text/plain">
+        </aside>
+
+        <aside class="file-sidebar" aria-label="LaTeX files">
+          <div class="file-sidebar-head">
+            <span>File</span>
+            <button class="file-add-btn" id="fileAddButton" type="button" aria-label="Add LaTeX file">+</button>
+          </div>
+          <button class="file-row active" type="button">
+            <img src="assets/icons/fi-rr-file.svg" alt="">
+            <span id="activeFileName">main.tex</span>
+          </button>
+        </aside>
+
+        <section class="source-column" aria-label="LaTeX source">
+          <div class="source-header">
+            <button class="source-tab active" id="textMode" type="button">
+              <img src="assets/icons/fi-rr-file.svg" alt="">
+              <span id="sourceTabName">main.tex</span>
+            </button>
+            <div class="source-zoom-slot" id="sourceZoomSlot"></div>
+          </div>
+          <!-- include:partials/compile-panel.html -->
+          <!-- include:partials/writing-panel.html -->
+        </section>
+
+        <div class="split-resizer" id="splitResizer" role="separator" aria-label="Resize PDF panel" aria-orientation="vertical"></div>
+
+        <section class="right-pane" id="rightPane" aria-label="PDF and pAIper AI panel">
+          <div class="right-pane-toolbar">
+            <div class="right-mode-title" id="rightModeTitle">
+              <img id="rightModeTitleIcon" src="assets/icons/chatbox-button.svg" alt="">
+              <span id="rightModeTitleText">pAIper AI</span>
+            </div>
+            <div class="pdf-nav" aria-label="PDF pages">
+              <button class="pdf-nav-btn muted" id="pdfPrevButton" type="button" aria-label="Previous page">
+                <img src="assets/icons/fi-rr-angle-small-left.svg" alt="">
+              </button>
+              <button class="pdf-nav-btn" id="pdfNextButton" type="button" aria-label="Next page">
+                <img src="assets/icons/fi-rr-angle-small-right.svg" alt="">
+              </button>
+              <span class="pdf-page-label" id="pdfPageLabel">1 / 1</span>
+            </div>
+            <button class="history-pane-btn" id="railHistory" type="button" title="Open Chat History">
+              <img src="assets/icons/fi-rr-time-past.svg" alt="">
+            </button>
+            <button class="switch-pane-btn" id="railChat" type="button">
+              <img id="switchPaneIcon" src="assets/icons/chatbox-button.svg" alt="">
+              <span id="switchPaneLabel">Switch to pAIper AI</span>
+            </button>
+          </div>
+          <!-- include:partials/preview-panel.html -->
+          <!-- include:partials/terminal-panel.html -->
+          <!-- include:partials/chat-panel.html -->
+        </section>
+      </div>
 
       <button class="add-context" id="addContext" type="button">+ Add context</button>
     </section>
-
-    <!-- include:partials/chat-panel.html -->
   </main>
 
   <script src="js/state.js"></script>
