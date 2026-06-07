@@ -19,6 +19,7 @@
     const composerShell = document.getElementById("composerShell");
     const composer = document.querySelector(".composer");
     const contextList = document.getElementById("contextList");
+    const promptEnhancementStatus = document.getElementById("promptEnhancementStatus");
     const promptBox = document.getElementById("prompt");
     const sendButton = document.getElementById("send");
     const acceptRewrite = document.getElementById("acceptRewrite");

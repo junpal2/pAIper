@@ -45,6 +45,7 @@
       if (!validateLensSelection()) return;
       applyLensRewrite();
       safetyLensVisited = true;
+      promptEnhancementStatus.classList.add("visible");
       guardPanel.classList.remove("open");
       openReviewCard(rewrittenPrompt);
       setSendArrow("up");
@@ -196,20 +197,13 @@
       return "";
     }
 
-    function eyeIcon(hidden = true) {
-      const slash = hidden ? '<path d="M4 20 20 4"/>' : "";
-      return `
-        <svg viewBox="0 0 24 24" aria-hidden="true">
-          <path d="M2.5 12s3.5-5.5 9.5-5.5 9.5 5.5 9.5 5.5-3.5 5.5-9.5 5.5S2.5 12 2.5 12Z"/>
-          <path d="M12 9.5a2.5 2.5 0 1 1 0 5 2.5 2.5 0 0 1 0-5Z"/>
-          ${slash}
-        </svg>`;
+    function bulbIcon() {
+      return '<img src="assets/icons/fi-rr-bulb.svg" alt="">';
     }
 
     function clearSourceHighlightButtons() {
       chatBody.querySelectorAll(".source-highlight-button").forEach((button) => {
         button.classList.remove("active");
-        button.innerHTML = eyeIcon(true);
       });
     }
 
@@ -233,20 +227,19 @@
     function createSourceHighlightButton(sourceText) {
       const button = document.createElement("button");
       button.type = "button";
-      button.className = "source-highlight-button";
+      button.className = "source-highlight-button active";
       button.setAttribute("aria-label", "Highlight source used for this answer");
-      button.innerHTML = eyeIcon(true);
+      button.innerHTML = bulbIcon();
       button.addEventListener("click", (event) => {
         event.stopPropagation();
         const isActive = button.classList.contains("active");
         if (isActive) {
-          clearSourceHighlightButtons();
+          button.classList.remove("active");
           clearCitationHighlight();
           return;
         }
         clearSourceHighlightButtons();
         button.classList.add("active");
-        button.innerHTML = eyeIcon(false);
         highlightSourceText(sourceText);
       });
       return button;
@@ -377,6 +370,7 @@
         if (!validateLensSelection()) return;
         applyLensRewrite();
         safetyLensVisited = true;
+        promptEnhancementStatus.classList.add("visible");
         guardPanel.classList.remove("open");
         openReviewCard(rewrittenPrompt);
         setSendArrow("up");
@@ -438,6 +432,7 @@
       originalPrompt = "";
       safetyLensVisited = true;
       chatFlowState = "ready";
+      promptEnhancementStatus.classList.add("visible");
       setComposerReviewMode(false);
       setSendArrow("up");
       autoSizePrompt();
@@ -451,6 +446,7 @@
       lensValidation.style.display = "none";
       safetyLensVisited = true;
       chatFlowState = "ready";
+      promptEnhancementStatus.classList.add("visible");
       setComposerReviewMode(false);
       setSendArrow("up");
       autoSizePrompt();
@@ -681,6 +677,7 @@
       setComposerReviewMode(false);
       setSendArrow("right");
       guardPanel.classList.remove("open");
+      promptEnhancementStatus.classList.remove("visible");
       autoSizePrompt();
     }
 
@@ -715,6 +712,7 @@
       setComposerReviewMode(false);
       setSendArrow("up");
       guardPanel.classList.remove("open");
+      promptEnhancementStatus.classList.toggle("visible", Boolean(currentMessages.length));
       clearCitationHighlight();
       showChat();
       composerShell.style.display = "flex";

@@ -805,7 +805,7 @@ h1 {
   display: flex;
   flex-direction: column;
   gap: 7px;
-  max-width: min(58%, 640px);
+  max-width: min(72%, 760px);
   padding: 13px 15px;
   border-radius: 16px 16px 16px 4px;
   background: #dfdfe6;
@@ -819,7 +819,7 @@ h1 {
   display: flex;
   align-items: flex-start;
   gap: 7px;
-  max-width: min(66%, 720px);
+  max-width: min(80%, 840px);
 }
 
 .mock-result h4 {
@@ -907,18 +907,15 @@ h1 {
   margin-top: 8px;
 }
 
-.source-highlight-button svg {
+.source-highlight-button img {
   width: 18px;
   height: 18px;
-  stroke: currentColor;
-  fill: none;
-  stroke-width: 1.7;
-  stroke-linecap: round;
-  stroke-linejoin: round;
+  display: block;
+  filter: brightness(0) saturate(100%) invert(60%) sepia(0%) saturate(0%) hue-rotate(151deg) brightness(92%) contrast(86%);
 }
 
-.source-highlight-button.active {
-  color: #a87900;
+.source-highlight-button.active img {
+  filter: brightness(0) saturate(100%) invert(67%) sepia(82%) saturate(769%) hue-rotate(359deg) brightness(96%) contrast(93%);
 }
 
 .typing-message {
@@ -1037,7 +1034,19 @@ h1 {
   max-width: 100%;
   display: flex;
   flex-direction: column;
-  overflow-x: hidden;
+  overflow: visible;
+}
+
+.prompt-enhancement-status {
+  order: 4;
+  display: none;
+  margin: 7px 0 0 44px;
+  color: #1f74e6;
+  font: 700 13px/1.2 Arial, Helvetica, sans-serif;
+}
+
+.prompt-enhancement-status.visible {
+  display: block;
 }
 
 .composer {
@@ -1196,7 +1205,7 @@ h1 {
   flex-direction: column;
   background: rgba(142, 142, 142, .96);
   color: #fff;
-  z-index: 8;
+  z-index: 40;
   border-radius: 13px;
   overflow: hidden;
   box-shadow: 0 8px 22px rgba(0, 0, 0, .2);
@@ -1332,7 +1341,7 @@ h1 {
 }
 
 .default-option-note {
-  margin: 2px 0 6px 23px;
+  margin: -2px 0 8px 0;
   color: #777;
   font-size: 10.5px;
   line-height: 1.18;
@@ -1701,7 +1710,7 @@ h1 {
   cursor: pointer;
   flex: 0 0 auto;
   margin-left: auto;
-  margin-right: 18px;
+  margin-right: 8px;
 }
 
 .right-pane.ai-mode .history-pane-btn,
@@ -1722,7 +1731,7 @@ h1 {
 
 .switch-pane-btn {
   height: 33px;
-  border: 1.5px solid #2f3f4a;
+  border: 0;
   border-radius: 10px;
   background: #e8e8e8;
   color: #222;
@@ -1844,7 +1853,7 @@ h1 {
 .right-pane.ai-mode .right-pane-toolbar,
 .right-pane.history-mode .right-pane-toolbar {
   justify-content: space-between;
-  gap: 16px;
+  gap: 10px;
 }
 
 .editor-shell.preview-mode .compile-strip {

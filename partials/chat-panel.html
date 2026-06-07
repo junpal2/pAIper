@@ -14,6 +14,7 @@
         <span>Prompt Enhancement Options</span><button class="lens-info-toggle" id="lensInfoToggle" type="button"
           aria-label="Show prompt enhancement explanations">ⓘ</button><small>*Select all that apply</small>
       </div>
+      <div class="default-option-note">Default options are auto-applied. Select more below to further refine your prompt.</div>
       <div class="lens-info-panel" id="lensInfoPanel">
         <p><strong>Source &amp; Citation Verification:</strong> Checks whether cited sources and evidence are real and
           relevant.</p>
@@ -33,8 +34,6 @@
             Citation Verification Lens</label></li>
         <li class="locked-option"><label><input type="checkbox" value="hallucination" checked disabled>Hallucination
             Detection Lens</label></li>
-        <li class="default-option-note">Default options are auto-applied. Select more below to further refine your
-          prompt.</li>
         <li><label><input type="checkbox" value="assumption">Assumption Challenge Lens</label></li>
         <li><label><input type="checkbox" value="over-reliance">Over-reliance Prevention Lens</label></li>
         <li><label><input type="checkbox" value="privacy">Privacy &amp; Confidentiality Lens</label></li>
@@ -48,6 +47,7 @@
         <button class="apply" id="applyGuard" type="button">Apply</button>
       </div>
     </div>
+    <div class="prompt-enhancement-status" id="promptEnhancementStatus">Prompt enhancement options active</div>
     <span class="guard-tip" id="guardTip">Set prompt enhancement options</span>
     <div class="plus-menu" id="plusMenu">
       <button id="addFilesOption" type="button">
