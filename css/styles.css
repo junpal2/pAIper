@@ -128,7 +128,7 @@ h1 {
 
 .editor-toolbar {
   height: 56px;
-  padding: 0 31px 0 35px;
+  padding: 0 11px 0 35px;
   display: flex;
   align-items: center;
   gap: 18px;
@@ -1206,7 +1206,7 @@ h1 {
   position: absolute;
   left: 1px;
   bottom: 51px;
-  width: 248px;
+  width: 340px;
   display: none;
   flex-direction: column;
   background: rgba(142, 142, 142, .96);
@@ -1233,10 +1233,14 @@ h1 {
   gap: 9px;
   padding: 0 12px;
   font-size: 15px;
-  font-weight: 500;
+  font-weight: 400;
   line-height: 1;
   cursor: pointer;
   text-align: left;
+}
+
+.plus-menu button span {
+  white-space: nowrap;
 }
 
 .plus-menu button:last-child {
