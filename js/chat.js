@@ -45,7 +45,7 @@
       if (!validateLensSelection()) return;
       applyLensRewrite();
       safetyLensVisited = true;
-      promptEnhancementStatus.classList.add("visible");
+      setPromptEnhancementActive(true);
       guardPanel.classList.remove("open");
       openReviewCard(rewrittenPrompt);
       setSendArrow("up");
@@ -207,6 +207,11 @@
       });
     }
 
+    function setPromptEnhancementActive(isActive) {
+      promptEnhancementStatus.classList.toggle("visible", isActive);
+      composerShell.classList.toggle("enhancement-active", isActive);
+    }
+
     function clearCitationHighlight() {
       activeCitationName = "";
       activeSourceText = "";
@@ -227,7 +232,7 @@
     function createSourceHighlightButton(sourceText) {
       const button = document.createElement("button");
       button.type = "button";
-      button.className = "source-highlight-button active";
+      button.className = "source-highlight-button";
       button.setAttribute("aria-label", "Highlight source used for this answer");
       button.innerHTML = bulbIcon();
       button.addEventListener("click", (event) => {
@@ -354,6 +359,17 @@
       return row;
     }
 
+    function applyDefaultSourceHighlight(result) {
+      const sourceText = result?.selectedText || "";
+      if (!sourceText) return;
+      clearSourceHighlightButtons();
+      const buttons = [...chatBody.querySelectorAll(".source-highlight-button")];
+      buttons.at(-1)?.classList.add("active");
+      activeCitationName = "";
+      activeSourceText = sourceText;
+      applyCitationHighlight();
+    }
+
     sendButton.addEventListener("click", () => {
       showChat();
       composerShell.style.display = "flex";
@@ -370,7 +386,7 @@
         if (!validateLensSelection()) return;
         applyLensRewrite();
         safetyLensVisited = true;
-        promptEnhancementStatus.classList.add("visible");
+        setPromptEnhancementActive(true);
         guardPanel.classList.remove("open");
         openReviewCard(rewrittenPrompt);
         setSendArrow("up");
@@ -432,7 +448,7 @@
       originalPrompt = "";
       safetyLensVisited = true;
       chatFlowState = "ready";
-      promptEnhancementStatus.classList.add("visible");
+      setPromptEnhancementActive(true);
       setComposerReviewMode(false);
       setSendArrow("up");
       autoSizePrompt();
@@ -446,7 +462,7 @@
       lensValidation.style.display = "none";
       safetyLensVisited = true;
       chatFlowState = "ready";
-      promptEnhancementStatus.classList.add("visible");
+      setPromptEnhancementActive(true);
       setComposerReviewMode(false);
       setSendArrow("up");
       autoSizePrompt();
@@ -537,6 +553,7 @@
       if (!lastSentPrompt || !lastMockResult) return;
       chatBody.innerHTML = "";
       chatBody.append(createUserMessage(lastSentPrompt), renderMockResult(lastMockResult));
+      applyDefaultSourceHighlight(lastMockResult);
       chatBody.scrollTop = chatBody.scrollHeight;
     }
 
@@ -545,6 +562,7 @@
       currentMessages.forEach((message) => {
         chatBody.append(createUserMessage(message.prompt), renderMockResult(message.result));
       });
+      applyDefaultSourceHighlight(currentMessages.at(-1)?.result);
       chatBody.scrollTop = chatBody.scrollHeight;
     }
 
@@ -677,7 +695,7 @@
       setComposerReviewMode(false);
       setSendArrow("right");
       guardPanel.classList.remove("open");
-      promptEnhancementStatus.classList.remove("visible");
+      setPromptEnhancementActive(false);
       autoSizePrompt();
     }
 
@@ -712,7 +730,7 @@
       setComposerReviewMode(false);
       setSendArrow("up");
       guardPanel.classList.remove("open");
-      promptEnhancementStatus.classList.toggle("visible", Boolean(currentMessages.length));
+      setPromptEnhancementActive(Boolean(currentMessages.length));
       clearCitationHighlight();
       showChat();
       composerShell.style.display = "flex";
