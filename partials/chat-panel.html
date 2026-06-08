@@ -16,29 +16,29 @@
       </div>
       <div class="default-option-note">Default options are auto-applied. Select more below to further refine your prompt.</div>
       <div class="lens-info-panel" id="lensInfoPanel">
-        <p><strong>Source &amp; Citation Verification:</strong> Checks whether cited sources and evidence are real and
-          relevant.</p>
-        <p><strong>Hallucination Detection:</strong> Checks whether the AI invents unsupported claims, references, or
-          examples.</p>
-        <p><strong>Assumption Challenge:</strong> Encourages alternative explanations instead of reinforcing the user's
-          initial assumptions.</p>
-        <p><strong>Over-reliance Prevention:</strong> Reminds users to critically evaluate AI outputs before accepting
-          them.</p>
-        <p><strong>Privacy &amp; Confidentiality:</strong> Checks anonymity, data minimization, and possible disclosure
-          of sensitive research data.</p>
-        <p><strong>Ethical Bias &amp; Representation:</strong> Checks whether outputs reflect cultural, demographic, or
-          ideological bias.</p>
+        <h4>Encourage the AI to...</h4>
+        <div class="lens-info-grid">
+          <p><strong>Source &amp; Citation Verification:</strong><br>verify whether cited sources are real and relevant.</p>
+          <p><strong>Hallucination Detection:</strong><br>avoid unsupported claims, references, or examples.</p>
+          <p><strong>Clear &amp; Structured Responses:</strong><br>provide clear, organized answers that are easier for users to verify.</p>
+          <p><strong>Alternative Perspectives:</strong><br>consider alternative explanations instead of relying on initial assumptions.</p>
+          <p><strong>Over-reliance Prevention:</strong><br>remind users to critically evaluate AI answers before accepting them.</p>
+          <p><strong>Privacy Protection:</strong><br>identify risks involving sensitive or confidential information.</p>
+          <p><strong>Ethical Bias Reduction:</strong><br>consider diverse perspectives and avoid one-sided conclusions.</p>
+        </div>
       </div>
       <ul class="guard-options">
         <li class="locked-option"><label><input type="checkbox" value="source-citation" checked disabled>Source &amp;
-            Citation Verification Lens</label></li>
+            Citation Verification</label></li>
         <li class="locked-option"><label><input type="checkbox" value="hallucination" checked disabled>Hallucination
-            Detection Lens</label></li>
-        <li><label><input type="checkbox" value="assumption">Assumption Challenge Lens</label></li>
-        <li><label><input type="checkbox" value="over-reliance">Over-reliance Prevention Lens</label></li>
-        <li><label><input type="checkbox" value="privacy">Privacy &amp; Confidentiality Lens</label></li>
-        <li><label><input type="checkbox" value="ethical-bias">Ethical Bias &amp; Representation Lens</label></li>
-        <li><label><input type="checkbox" value="custom">Add Custom Lens</label></li>
+            Detection</label></li>
+        <li class="locked-option"><label><input type="checkbox" value="clear-structured" checked disabled>Clear &amp;
+            Structured Responses</label></li>
+        <li><label><input type="checkbox" value="assumption">Alternative Perspectives</label></li>
+        <li><label><input type="checkbox" value="over-reliance">Over-reliance Prevention</label></li>
+        <li><label><input type="checkbox" value="privacy">Privacy Protection</label></li>
+        <li><label><input type="checkbox" value="ethical-bias">Ethical Bias Reduction</label></li>
+        <li><label><input type="checkbox" value="custom">Add Custom Enhancement</label></li>
       </ul>
       <input class="custom-lens" id="customLensInput" type="text" placeholder="Enter ...">
       <div class="lens-validation" id="lensValidation"></div>
