@@ -7,6 +7,7 @@
           <img src="assets/icons/fi-rr-cross-small.svg" alt="">
         </button>
       </div>
+<<<<<<< Updated upstream
       <div class="chat-body" id="chatBody"></div>
       <div class="composer-shell" id="composerShell">
         <div class="guard-panel" id="guardPanel">
@@ -75,3 +76,79 @@
         </div>
       </div>
     </aside>
+=======
+      <div class="default-option-note">Default options are auto-applied. Select more below to further refine your prompt.</div>
+      <div class="lens-info-panel" id="lensInfoPanel">
+        <div class="lens-info-grid">
+          <p><strong>Source &amp; Citation Verification:</strong> verify whether cited sources are real and relevant.</p>
+          <p><strong>Hallucination Detection:</strong> avoid unsupported claims, references, or examples.</p>
+          <p><strong>Clear &amp; Structured Responses:</strong> provide clear, organized answers that are easier for users to verify.</p>
+          <p><strong>Alternative Perspectives:</strong> consider alternative explanations instead of relying on initial assumptions.</p>
+          <p><strong>Over-reliance Prevention:</strong> remind users to critically evaluate AI answers before accepting them.</p>
+          <p><strong>Privacy Protection:</strong> identify risks involving sensitive or confidential information.</p>
+          <p><strong>Ethical Bias Reduction:</strong> consider diverse perspectives and avoid one-sided conclusions.</p>
+        </div>
+      </div>
+      <ul class="guard-options">
+        <li class="locked-option"><label><input type="checkbox" value="source-citation" checked disabled>Source &amp;
+            Citation Verification</label></li>
+        <li class="locked-option"><label><input type="checkbox" value="hallucination" checked disabled>Hallucination
+            Detection</label></li>
+        <li class="locked-option"><label><input type="checkbox" value="clear-structured" checked disabled>Clear &amp;
+            Structured Responses</label></li>
+        <li><label><input type="checkbox" value="assumption">Alternative Perspectives</label></li>
+        <li><label><input type="checkbox" value="over-reliance">Over-reliance Prevention</label></li>
+        <li><label><input type="checkbox" value="privacy">Privacy Protection</label></li>
+        <li><label><input type="checkbox" value="ethical-bias">Ethical Bias Reduction</label></li>
+        <li class="custom-option">
+          <label><input type="checkbox" value="custom">Add Custom Enhancement</label>
+          <input class="custom-lens" id="customLensInput" type="text" placeholder="Enter ...">
+        </li>
+      </ul>
+      <div class="lens-validation" id="lensValidation"></div>
+      <div class="guard-actions">
+        <button class="guard-back" id="guardBack" type="button" aria-label="Back">
+          <img src="assets/icons/fi-rr-arrow-small-up.svg" alt="">
+        </button>
+        <button class="apply" id="applyGuard" type="button">Apply</button>
+      </div>
+    </div>
+    <div class="prompt-enhancement-status" id="promptEnhancementStatus">Prompt enhancement options active</div>
+    <span class="guard-tip" id="guardTip">Set prompt enhancement options</span>
+    <div class="plus-menu" id="plusMenu">
+      <button id="addFilesOption" type="button">
+        <svg viewBox="0 0 24 24" aria-hidden="true">
+          <path d="M21 11.5 12 20.5a6 6 0 0 1-8.5-8.5l9.7-9.7a4 4 0 0 1 5.7 5.7l-9.7 9.7a2 2 0 1 1-2.8-2.8l8.9-8.9" />
+        </svg>
+        <span>Add photos &amp; files</span>
+      </button>
+      <button id="openLensOption" type="button">
+        <svg viewBox="0 0 24 24" aria-hidden="true">
+          <path d="m4 6 2 2 4-4" />
+          <path d="m4 12 2 2 4-4" />
+          <path d="m4 18 2 2 4-4" />
+          <path d="M13 7h7" />
+          <path d="M13 13h7" />
+          <path d="M13 19h7" />
+        </svg>
+        <span>Set prompt enhancement options</span>
+      </button>
+    </div>
+    <div class="context-list" id="contextList"></div>
+    <div class="composer">
+      <button class="icon-button" id="plus" type="button" aria-label="Add prompt enhancement option">
+        <img src="assets/icons/fi-rr-plus-small.svg" alt="">
+      </button>
+      <textarea class="prompt-input" id="prompt" rows="2"
+        placeholder="Drag the text from your paper to ask about it."></textarea>
+      <button class="icon-button send" id="send" type="button" aria-label="Send">
+        <img src="assets/icons/fi-rr-arrow-small-up.svg" alt="">
+      </button>
+      <div class="composer-review-actions" id="composerReviewActions">
+        <button class="accept" id="acceptRewrite" type="button">Accept</button>
+        <button class="decline" id="declineRewrite" type="button">Decline</button>
+      </div>
+    </div>
+  </div>
+</aside>
+>>>>>>> Stashed changes

@@ -46,7 +46,12 @@
     const zoomMenu = document.getElementById("zoomMenu");
     const zoomOptions = [...document.querySelectorAll(".zoom-option")];
     const toolButtons = [textMode, compileMode, terminalMode];
+<<<<<<< Updated upstream
     const checks = [...document.querySelectorAll(".guard-options input")];
+=======
+    const checks = [...document.querySelectorAll(".guard-options input[type='checkbox']")];
+    const AI_CHAT_TITLE = "pAIper AI";
+>>>>>>> Stashed changes
 
     const initialLatex = `\\documentclass{article}
 \\usepackage{graphicx} % Required for inserting images
