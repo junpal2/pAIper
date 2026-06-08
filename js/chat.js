@@ -105,7 +105,7 @@
       const lensDefinitions = selectedLensIds.map(getLensDefinition).filter(Boolean);
       return lensDefinitions.map((lens) => {
         const customLine = lens.id === "custom" && customLensText
-          ? ` Custom lens provided by user: ${customLensText}.`
+          ? ` Custom enhancement provided by user: ${customLensText}.`
           : "";
         return `${lens.rewrittenPrompt}${customLine}`;
       }).join("\n\n");
@@ -140,7 +140,7 @@
       const customSelected = checks.some(item => item.value === "custom" && item.checked);
       const customLensText = customLensInput.value.trim();
       const invalid = customSelected && !customLensText;
-      lensValidation.textContent = invalid ? "Enter a custom lens before applying this option." : "";
+      lensValidation.textContent = invalid ? "Enter a custom enhancement before applying this option." : "";
       lensValidation.style.display = invalid && showMessage ? "block" : "none";
       return !invalid;
     }

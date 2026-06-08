@@ -11,8 +11,6 @@
 
   <main class="stage source-active" id="stage">
     <section class="editor-shell source-mode" aria-label="LaTeX paper editor">
-      <!-- include:partials/editor-toolbar.html -->
-
       <div class="workspace-body">
         <aside class="workspace-rail" aria-label="Workspace navigation">
           <button class="side-rail-btn" id="fileRail" type="button" title="Add LaTeX file">
@@ -38,7 +36,19 @@
               <img src="assets/icons/fi-rr-file.svg" alt="">
               <span id="sourceTabName">main.tex</span>
             </button>
-            <div class="source-zoom-slot" id="sourceZoomSlot"></div>
+            <div class="source-zoom-slot" id="sourceZoomSlot">
+              <div class="zoom-wrap">
+                <button class="zoom" id="zoomButton" type="button" aria-haspopup="true" aria-expanded="false">
+                  <span id="zoomLabel">100%</span><img class="zoom-caret" src="assets/icons/fi-rr-caret-down.svg" alt="" aria-hidden="true">
+                </button>
+                <div class="zoom-menu" id="zoomMenu">
+                  <button class="zoom-option" type="button" data-zoom="75">75%</button>
+                  <button class="zoom-option active" type="button" data-zoom="100">100%</button>
+                  <button class="zoom-option" type="button" data-zoom="125">125%</button>
+                  <button class="zoom-option" type="button" data-zoom="150">150%</button>
+                </div>
+              </div>
+            </div>
           </div>
           <!-- include:partials/compile-panel.html -->
           <!-- include:partials/writing-panel.html -->
