@@ -1,5 +1,7 @@
     const stage = document.getElementById("stage");
     const editorShell = document.querySelector(".editor-shell");
+    const workspaceBody = document.querySelector(".workspace-body");
+    const rightPane = document.getElementById("rightPane");
     const sourcePane = document.getElementById("sourcePane");
     const previewPane = document.getElementById("previewPane");
     const pdfFrame = document.getElementById("pdfFrame");
@@ -17,6 +19,7 @@
     const composerShell = document.getElementById("composerShell");
     const composer = document.querySelector(".composer");
     const contextList = document.getElementById("contextList");
+    const promptEnhancementStatus = document.getElementById("promptEnhancementStatus");
     const promptBox = document.getElementById("prompt");
     const sendButton = document.getElementById("send");
     const acceptRewrite = document.getElementById("acceptRewrite");
@@ -27,8 +30,8 @@
     const openLensOption = document.getElementById("openLensOption");
     const guardTip = document.getElementById("guardTip");
     const guardPanel = document.getElementById("guardPanel");
-    const applyGuard = document.getElementById("applyGuard");
     const guardBack = document.getElementById("guardBack");
+    const applyGuard = document.getElementById("applyGuard");
     const lensInfoToggle = document.getElementById("lensInfoToggle");
     const lensInfoPanel = document.getElementById("lensInfoPanel");
     const customLensInput = document.getElementById("customLensInput");
@@ -39,6 +42,20 @@
     const terminalMode = document.getElementById("terminalMode");
     const railChat = document.getElementById("railChat");
     const railHistory = document.getElementById("railHistory");
+    const fileRail = document.getElementById("fileRail");
+    const fileAddButton = document.getElementById("fileAddButton");
+    const latexFileInput = document.getElementById("latexFileInput");
+    const splitResizer = document.getElementById("splitResizer");
+    const pdfPrevButton = document.getElementById("pdfPrevButton");
+    const pdfNextButton = document.getElementById("pdfNextButton");
+    const pdfPageLabel = document.getElementById("pdfPageLabel");
+    const activeFileName = document.getElementById("activeFileName");
+    const sourceTabName = document.getElementById("sourceTabName");
+    const sourceZoomSlot = document.getElementById("sourceZoomSlot");
+    const switchPaneIcon = document.getElementById("switchPaneIcon");
+    const switchPaneLabel = document.getElementById("switchPaneLabel");
+    const rightModeTitleIcon = document.getElementById("rightModeTitleIcon");
+    const rightModeTitleText = document.getElementById("rightModeTitleText");
     const compileStrip = document.getElementById("compileStrip");
     const recompileButton = document.getElementById("recompileButton");
     const zoomButton = document.getElementById("zoomButton");
@@ -46,12 +63,8 @@
     const zoomMenu = document.getElementById("zoomMenu");
     const zoomOptions = [...document.querySelectorAll(".zoom-option")];
     const toolButtons = [textMode, compileMode, terminalMode];
-<<<<<<< Updated upstream
-    const checks = [...document.querySelectorAll(".guard-options input")];
-=======
     const checks = [...document.querySelectorAll(".guard-options input[type='checkbox']")];
     const AI_CHAT_TITLE = "pAIper AI";
->>>>>>> Stashed changes
 
     const initialLatex = `\\documentclass{article}
 \\usepackage{graphicx} % Required for inserting images
@@ -108,6 +121,7 @@ Our work is motivated by the idea that distraction management should be responsi
     let lastSentPrompt = "";
     let lastMockResult = null;
     let activeCitationName = "";
+    let activeSourceText = "";
     const HISTORY_STORAGE_KEY = "wrtEvalChatSessions";
     let chatSessions = [];
     let currentMessages = [];
@@ -116,6 +130,9 @@ Our work is motivated by the idea that distraction management should be responsi
     let lastCompiledSource = initialLatex;
     let lastPdfUrl = "";
     let isCompiling = false;
+    let currentPdfPage = 1;
+    let totalPdfPages = 1;
+    let previewPages = [];
     const zoomLevels = [75, 100, 125, 150];
     let currentZoom = 100;
 
@@ -123,7 +140,7 @@ Our work is motivated by the idea that distraction management should be responsi
     const safetyLensMockResponses = [
       {
         id: "source-citation",
-        label: "Source & Citation Verification Lens",
+        label: "Source & Citation Verification",
         description: "Checks whether claims are supported by credible sources.",
         rewrittenPrompt: "Identify the limitations of the selected paper section while verifying whether the claims are supported by credible sources. Check whether major statements require citations, distinguish evidence-based claims from unsupported assertions, and suggest where references should be added. Do not invent citations or assume that a source supports a claim unless it is explicitly provided.",
         mockResponse: [
@@ -134,7 +151,7 @@ Our work is motivated by the idea that distraction management should be responsi
       },
       {
         id: "hallucination",
-        label: "Hallucination Detection Lens",
+        label: "Hallucination Detection",
         description: "Restricts feedback to information present in the selected text.",
         rewrittenPrompt: "Identify the limitations of the selected paper section using only information that is explicitly present in the text. Clearly separate what is supported by the selected text from what is speculative or unsupported. Avoid inventing experimental results, user study findings, citations, implementation details, performance metrics, or conclusions that are not provided.",
         mockResponse: [
@@ -144,8 +161,19 @@ Our work is motivated by the idea that distraction management should be responsi
         ]
       },
       {
+        id: "clear-structured",
+        label: "Clear & Structured Responses",
+        description: "Encourages clear, organized answers that are easier to verify.",
+        rewrittenPrompt: "Provide clear, structured feedback on the selected paper section. Organize the answer into concise sections, separate evidence-based observations from revision suggestions, and make the reasoning easy for users to verify.",
+        mockResponse: [
+          "Organize feedback into clear sections that users can scan and verify.",
+          "Separate limitations, evidence gaps, and suggested revisions.",
+          "Use concise wording and avoid vague or unsupported conclusions."
+        ]
+      },
+      {
         id: "assumption",
-        label: "Assumption Challenge Lens",
+        label: "Alternative Perspectives",
         description: "Challenges hidden assumptions and weak causal claims.",
         rewrittenPrompt: "Identify the limitations of the selected paper section by challenging hidden assumptions, weak causal claims, and design choices that may require further justification. Examine whether the argument relies on unproven assumptions, whether alternative explanations are possible, and whether additional evidence is needed to support the paper’s reasoning.",
         mockResponse: [
@@ -157,7 +185,7 @@ Our work is motivated by the idea that distraction management should be responsi
       },
       {
         id: "over-reliance",
-        label: "Over-reliance Prevention Lens",
+        label: "Over-reliance Prevention",
         description: "Checks automation dependency and loss of user control.",
         rewrittenPrompt: "Identify the limitations of the selected paper section while examining whether the proposed AI system may encourage users to over-rely on automated decisions or reduce their own control. Check for risks related to automation dependency, loss of user agency, reduced self-regulation, and insufficient transparency. Suggest ways to keep users informed and in control.",
         mockResponse: [
@@ -169,7 +197,7 @@ Our work is motivated by the idea that distraction management should be responsi
       },
       {
         id: "privacy",
-        label: "Privacy & Confidentiality Lens",
+        label: "Privacy Protection",
         description: "Checks anonymity, confidentiality, and gaze data safeguards.",
         rewrittenPrompt: "Identify the limitations of the selected paper section while explicitly checking risks related to participant anonymity, confidentiality, data minimization, re-identification, biometric or behavioral data sensitivity, and unintended disclosure. Avoid suggestions that require unnecessary sensitive data collection, and recommend safeguards for storing, processing, and sharing user data.",
         mockResponse: [
@@ -181,7 +209,7 @@ Our work is motivated by the idea that distraction management should be responsi
       },
       {
         id: "ethical-bias",
-        label: "Ethical Bias & Representation Lens",
+        label: "Ethical Bias Reduction",
         description: "Checks representation, accessibility, and fairness concerns.",
         rewrittenPrompt: "Identify the limitations of the selected paper section while reviewing whether the research may exclude certain groups, misrepresent users, reinforce stereotypes, or rely on biased assumptions about attention, productivity, disability, neurodiversity, or digital behavior. Evaluate whether the proposed system would work fairly across different users, contexts, devices, and accessibility needs.",
         mockResponse: [
@@ -193,14 +221,14 @@ Our work is motivated by the idea that distraction management should be responsi
       },
       {
         id: "custom",
-        label: "Add Custom Lens",
+        label: "Add Custom Enhancement",
         description: "Applies the user's custom safety review perspective.",
-        rewrittenPrompt: "Rewrite the user's question according to the custom safety lens provided by the user. Apply the custom lens as the main review perspective while still avoiding unsupported claims, unnecessary sensitive data collection, and overconfident conclusions. Clearly explain how the selected text should be evaluated under this custom perspective.",
+        rewrittenPrompt: "Rewrite the user's question according to the custom enhancement provided by the user. Apply the custom enhancement as the main review perspective while still avoiding unsupported claims, unnecessary sensitive data collection, and overconfident conclusions. Clearly explain how the selected text should be evaluated under this custom perspective.",
         mockResponse: [
-          "Use the user's custom lens input.",
+          "Use the user's custom enhancement input.",
           "Generate a short custom rewritten prompt.",
-          "Generate 2-4 mock findings based on the custom lens.",
-          "Example: if the custom lens is Accessibility Lens, discuss blur-based intervention risks, eye-tracking hardware availability, fallback modes, and inclusive interaction design."
+          "Generate 2-4 mock findings based on the custom enhancement.",
+          "Example: if the custom enhancement is Accessibility, discuss blur-based intervention risks, eye-tracking hardware availability, fallback modes, and inclusive interaction design."
         ]
       }
     ];
@@ -248,6 +276,21 @@ FocusFlow solves this problem effectively.
 Suggested revision
 
 The paper should either provide evidence for these claims or frame them as motivation rather than established findings.`,
+      "clear-structured": `The response should be organized so that the user can quickly verify what is being claimed.
+
+Suggested structure
+
+Evidence-based observations
+List only what is directly supported by the selected text.
+
+Limitations
+Identify missing evidence, unclear definitions, or unsupported claims.
+
+Revision suggestions
+Provide concrete edits or additions that would make the paper stronger.
+
+Verification reminders
+Mark which points require citations, user study results, implementation details, or additional explanation.`,
       "assumption": `A key limitation is that the passage relies on several assumptions that are not yet justified.
 
 First, it assumes that notifications, highlighted interface elements, and competing visual stimuli are primarily distracting. However, some notifications may be urgent, useful, or directly related to the user's task.

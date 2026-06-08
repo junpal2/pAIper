@@ -1,28 +1,28 @@
     function showSource(options = {}) {
       stage.classList.add("source-active");
-      editorShell.classList.remove("preview-mode", "log-mode");
+      editorShell.classList.remove("log-mode");
       editorShell.classList.add("source-mode");
       sourcePane.style.display = "grid";
-      previewPane.style.display = "none";
       mainLogPane.style.display = "none";
-      if (options.hideChat !== false) hideChat();
+      if (options.hideChat !== false) setRightPaneMode("pdf");
+      setActive(textMode);
       updateEditorView();
       latexInput.focus();
     }
 
     function highlightLatex(source) {
+      const sourceHighlightTargets = getSourceHighlightTargets();
       return source.split("\n").map((line) => {
         const commentIndex = line.indexOf("%");
         const body = commentIndex >= 0 ? line.slice(0, commentIndex) : line;
         const comment = commentIndex >= 0 ? line.slice(commentIndex) : "";
         let html = escapeHTML(body);
-        const citationTarget = getCitationTargetText(activeCitationName);
-        if (citationTarget) {
+        sourceHighlightTargets.forEach((target) => {
           html = html.replaceAll(
-            escapeHTML(citationTarget),
-            `<span class="citation-hit">${escapeHTML(citationTarget)}</span>`
+            escapeHTML(target),
+            `<span class="citation-hit">${escapeHTML(target)}</span>`
           );
-        }
+        });
 
         html = html.replace(/(\\(?:documentclass|usepackage|begin|end|newcommand|renewcommand))(?=({|\\s|$))/g, '<span class="syn-struct">$1</span>');
         html = html.replace(/(\\(?:title|author|date|section|subsection|textbf|item|maketitle|includegraphics))(?=({|\\s|$))/g, '<span class="syn-command">$1</span>');
@@ -36,28 +36,40 @@
       }).join("\n");
     }
 
+    function getSourceHighlightTargets() {
+      const targetText = activeSourceText || getCitationTargetText(activeCitationName);
+      if (!targetText) return [];
+      return [...new Set(
+        targetText
+          .split("\n")
+          .map(line => line.trim())
+          .filter(Boolean)
+      )].sort((a, b) => b.length - a.length);
+    }
+
     function measureLineHeight(line, width) {
-      const measure = document.createElement("div");
+      const style = getComputedStyle(latexInput);
+      const lineHeight = parseFloat(style.lineHeight);
+      const measure = document.createElement("span");
       measure.style.position = "absolute";
       measure.style.visibility = "hidden";
       measure.style.pointerEvents = "none";
-      measure.style.boxSizing = "border-box";
-      measure.style.width = `${Math.max(width, 1)}px`;
-      measure.style.font = getComputedStyle(latexInput).font;
-      measure.style.lineHeight = getComputedStyle(latexInput).lineHeight;
-      measure.style.whiteSpace = "pre-wrap";
-      measure.style.overflowWrap = "break-word";
-      measure.style.wordBreak = "normal";
-      measure.textContent = line || " ";
+      measure.style.font = style.font;
+      measure.textContent = "0";
       document.body.appendChild(measure);
-      const height = Math.max(parseFloat(getComputedStyle(latexInput).lineHeight), measure.scrollHeight);
+      const charWidth = Math.max(measure.getBoundingClientRect().width, 1);
       measure.remove();
-      return height;
+      const columns = Math.max(1, Math.floor(Math.max(width - 2, 1) / charWidth));
+      const visualLines = Math.max(1, Math.ceil((line.replace(/\t/g, "    ").length || 1) / columns));
+      return visualLines * lineHeight;
     }
 
     function updateLineNumbers() {
       const lines = latexInput.value.split("\n");
-      const width = latexInput.clientWidth;
+      const style = getComputedStyle(latexInput);
+      const width = latexInput.clientWidth
+        - parseFloat(style.paddingLeft || 0)
+        - parseFloat(style.paddingRight || 0);
       const lineHeight = parseFloat(getComputedStyle(latexInput).lineHeight);
       lineNumbers.innerHTML = lines.map((_, index) => {
         const height = measureLineHeight(lines[index], width);
@@ -133,33 +145,31 @@
         /By using gaze behavior as an interaction signal, FocusFlow seeks to support a more personalized and dynamic form of attention assistance\./g,
         "<span data-cite=\"responsive\">By using gaze behavior as an interaction signal, FocusFlow seeks to support a more personalized and dynamic form of attention assistance.</span>"
       );
+      html = markActiveSourceText(text, html);
+      return html;
+    }
+
+    function markActiveSourceText(text, html) {
+      if (!activeSourceText) return html;
+      const activeText = stripLatex(activeSourceText);
+      const paragraphText = text.replace(/\s+/g, " ").trim();
+      if (!activeText || !paragraphText) return html;
+      if (activeText.includes(paragraphText)) {
+        return `<span class="citation-hit">${html}</span>`;
+      }
+      if (paragraphText.includes(activeText)) {
+        return html.replaceAll(
+          escapeHTML(activeText),
+          `<span class="citation-hit">${escapeHTML(activeText)}</span>`
+        );
+      }
       return html;
     }
 
     function renderPreview(source = lastCompiledSource) {
-      const title = stripLatex(matchLatex("title", source)) || "Untitled";
-      const author = stripLatex(matchLatex("author", source));
-      const date = stripLatex(matchLatex("date", source));
-      const abstract = stripLatex(matchEnvironment("abstract", source));
-      const afterAbstract = source.split(/\\end\{abstract\}/)[1] || source;
-      const sectionParts = afterAbstract.split(/\\section\{([^{}]+)\}/g).slice(1);
-
-      let html = `<h2 class="compiled-title">${escapeHTML(title)}</h2>`;
-      if (author) html += `<div class="compiled-authors">${escapeHTML(author)}</div>`;
-      if (date) html += `<div class="compiled-date">${escapeHTML(date)}</div>`;
-      if (abstract) {
-        html += `<div class="abstract-title">Abstract</div><p class="compiled-abstract">${markCitations(abstract)}</p>`;
-      }
-
-      for (let i = 0; i < sectionParts.length; i += 2) {
-        const sectionTitle = stripLatex(sectionParts[i]);
-        const body = stripLatex(sectionParts[i + 1] || "");
-        if (!sectionTitle) continue;
-        html += `<h3 class="compiled-section"><span>${i / 2 + 1}</span><span>${escapeHTML(sectionTitle)}</span></h3>`;
-        if (body) html += `<p class="compiled-body">${markCitations(body)}</p>`;
-      }
-
-      compiledPaper.innerHTML = html;
+      previewPages = buildPreviewPages(source);
+      updatePdfNav();
+      compiledPaper.innerHTML = previewPages[currentPdfPage - 1] || "";
     }
 
     function textClip(text, max = 118) {
@@ -167,9 +177,14 @@
       return clean.length > max ? `${clean.slice(0, max)} ...` : clean;
     }
 
-    function canAddContext() {
-      const chatBoxOpen = !chat.classList.contains("closed") && chatTitle.textContent === "Chat Box";
-      return chatBoxOpen && textMode.classList.contains("active") && sourcePane.style.display !== "none";
+    function canAddSourceContext() {
+      return sourcePane.style.display !== "none";
+    }
+
+    function canAddPreviewContext() {
+      return rightPane.classList.contains("pdf-mode")
+        && previewPane.style.display !== "none"
+        && compiledPaper.style.display !== "none";
     }
 
     function getTextareaCaretPoint(textarea, index) {
@@ -214,7 +229,7 @@
     }
 
     function updateSelectedText() {
-      if (!canAddContext()) {
+      if (!canAddSourceContext()) {
         addContext.style.display = "none";
         return;
       }
@@ -240,21 +255,23 @@
     });
     latexInput.addEventListener("mouseup", updateSelectedText);
     latexInput.addEventListener("keyup", updateSelectedText);
+    document.addEventListener("mouseup", () => {
+      if (document.activeElement === latexInput) updateSelectedText();
+    });
     window.addEventListener("resize", updateEditorView);
 
     document.addEventListener("selectionchange", () => {
-      if (!canAddContext()) {
-        addContext.style.display = "none";
+      if (document.activeElement === latexInput) {
+        updateSelectedText();
         return;
       }
-      if (sourcePane.style.display !== "none") return;
       const selection = window.getSelection();
       if (!selection || selection.rangeCount === 0 || selection.isCollapsed) {
         addContext.style.display = "none";
         return;
       }
       const range = selection.getRangeAt(0);
-      if (!compiledPaper.contains(range.commonAncestorContainer)) {
+      if (!canAddPreviewContext() || !compiledPaper.contains(range.commonAncestorContainer)) {
         addContext.style.display = "none";
         return;
       }
@@ -279,7 +296,7 @@
     });
 
     function addContextChip(text) {
-      showChat("Chat Box");
+      showChat();
       composerShell.style.display = "flex";
       if (!contexts.includes(text)) contexts.unshift(text);
       renderContext();
@@ -290,8 +307,10 @@
       contexts.forEach((text, index) => {
         const chip = document.createElement("div");
         chip.className = "context-chip";
-        chip.textContent = textClip(text);
-        chip.title = "Click to highlight source text";
+        const label = document.createElement("span");
+        label.className = "context-chip-text";
+        label.textContent = textClip(text, 190);
+        chip.appendChild(label);
         chip.addEventListener("click", () => highlightCitation(text.includes("personalized") ? "responsive" : "gaze"));
         const x = document.createElement("button");
         x.className = "remove-chip";

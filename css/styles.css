@@ -19,28 +19,18 @@ body {
   margin: 0;
   min-height: 100vh;
   color: var(--ink);
-  background:
-    radial-gradient(circle at 50% 14%, rgba(82, 82, 82, .5), transparent 34%),
-    linear-gradient(90deg, #2f2f2f 0%, #151515 46%, #111 100%);
+  background: #f2f2f2;
   font-family: Arial, Helvetica, sans-serif;
   letter-spacing: 0;
 }
 
 .topbar {
-  height: 92px;
+  height: 64px;
   display: flex;
   align-items: center;
-<<<<<<< Updated upstream
-  gap: 18px;
-  padding: 0 34px;
-  background:
-    linear-gradient(180deg, rgba(255, 255, 255, .82) 0%, rgba(242, 242, 242, .72) 48%, rgba(190, 190, 190, .72) 100%),
-    linear-gradient(90deg, #ffffff 0%, #f7f7f7 48%, #d9d9d9 75%, #bdbdbd 100%);
-=======
   gap: 16px;
   padding: 0 34px 0 14px;
   background: #fff;
->>>>>>> Stashed changes
   border-bottom: 1px solid #ababab;
   box-shadow: 0 5px 14px rgba(0, 0, 0, .3);
 }
@@ -53,8 +43,8 @@ body {
 }
 
 .home-link {
-  width: 36px;
-  height: 36px;
+  width: 29px;
+  height: 29px;
   color: #56636d;
   flex: 0 0 auto;
   display: grid;
@@ -63,8 +53,8 @@ body {
 }
 
 .home-link img {
-  width: 27px;
-  height: 27px;
+  width: 24px;
+  height: 24px;
   display: block;
 }
 
@@ -76,50 +66,25 @@ body {
 
 h1 {
   margin: 0;
-  font-size: 25px;
+  font-size: 23px;
   line-height: 1;
-  font-weight: 800;
+  font-weight: 700;
   color: #050505;
   white-space: nowrap;
 }
 
-.tutorial-btn {
-  width: 24px;
-  height: 24px;
-  border: 0;
-  border-radius: 0;
-  background: transparent;
-  display: grid;
-  place-items: center;
-  padding: 0;
-  cursor: pointer;
-}
-
-.tutorial-btn img {
-  width: 24px;
-  height: 24px;
-  display: block;
-  pointer-events: none;
-}
-
 .stage {
   position: relative;
-  min-height: calc(100vh - 92px);
-  padding: 34px 38px 32px;
-  background:
-    radial-gradient(circle at 50% 14%, rgba(82, 82, 82, .5), transparent 34%),
-    linear-gradient(90deg, #2f2f2f 0%, #151515 46%, #111 100%);
-  display: grid;
-  grid-template-columns: minmax(760px, 980px) 404px;
-  justify-content: center;
-  align-items: start;
-  gap: 26px;
+  height: calc(100vh - 64px);
+  min-height: 0;
+  padding: 0;
+  background: #f2f2f2;
+  display: block;
   overflow: hidden;
-  transition: grid-template-columns .18s ease;
 }
 
 .stage.chat-hidden {
-  grid-template-columns: 1040px;
+  grid-template-columns: none;
 }
 
 .stage.chat-hidden .editor-shell {
@@ -143,6 +108,12 @@ h1 {
   padding: 0;
 }
 
+.rail-btn.active {
+  background: #ececec;
+  color: #222;
+  box-shadow: inset 0 0 0 4px #747474;
+}
+
 .rail-btn img {
   width: 24px;
   height: 24px;
@@ -152,26 +123,46 @@ h1 {
 .editor-shell {
   position: relative;
   width: 100%;
-  height: 820px;
-  max-height: calc(100vh - 126px);
+  height: 100%;
+  min-height: 0;
+  max-height: none;
   background: #fff;
-  border: 1px solid var(--paper-edge);
-  border-radius: 16px;
+  border: 0;
+  border-radius: 0;
   overflow: hidden;
-  box-shadow: 0 10px 32px rgba(0, 0, 0, .08);
+  box-shadow: none;
 }
 
 .editor-toolbar {
-  height: 49px;
-  padding: 7px 10px;
+  height: 56px;
+  padding: 0 11px 0 35px;
   display: flex;
   align-items: center;
-  gap: 6px;
-  background: var(--tool);
+  gap: 18px;
+  background: #fff;
+  border-bottom: 2px solid #d9d9d9;
   border-radius: 0;
 }
 
-.tool-btn,
+.top-tool-btn {
+  width: 34px;
+  height: 34px;
+  border: 0;
+  background: transparent;
+  display: grid;
+  place-items: center;
+  padding: 0;
+  cursor: pointer;
+}
+
+.top-tool-btn img {
+  width: 30px;
+  height: 30px;
+  display: block;
+  object-fit: contain;
+  filter: brightness(0) saturate(100%) invert(17%) sepia(0%) saturate(1124%) hue-rotate(187deg) brightness(94%) contrast(86%);
+}
+
 .zoom {
   position: relative;
   height: 34px;
@@ -195,12 +186,14 @@ h1 {
 }
 
 .zoom {
-  width: 94px;
-  min-width: 94px;
-  padding: 0 13px;
+  width: 78px;
+  min-width: 78px;
+  height: 28px;
+  padding: 0 9px;
   grid-template-columns: auto auto;
   justify-content: center;
-  column-gap: 8px;
+  column-gap: 6px;
+  border-radius: 8px;
 }
 
 .zoom-caret {
@@ -249,13 +242,15 @@ h1 {
   color: #222;
 }
 
-.tool-btn.active {
-  background: #ececec;
+.tool-btn.active,
+.top-tool-btn.active {
+  background: transparent;
   color: #222;
-  box-shadow: inset 0 0 0 4px #747474;
+  box-shadow: none;
 }
 
-.tool-btn img {
+.tool-btn img,
+.top-tool-btn img {
   width: 19px;
   height: 19px;
   display: block;
@@ -585,15 +580,17 @@ h1 {
   z-index: 30;
   display: none;
   align-items: center;
-  gap: 4px;
+  gap: 5px;
   height: 30px;
-  padding: 0 12px;
-  border: 1px solid #111;
+  padding: 0 13px;
+  border: 1.25px solid rgba(47, 63, 74, .82);
   border-radius: 999px;
-  background: #171717;
-  color: #fff;
-  font: 700 13px/1 Arial, sans-serif;
-  box-shadow: 0 5px 16px rgba(0, 0, 0, .28);
+  background: rgba(244, 247, 249, .72);
+  color: #202020;
+  font: 700 14px/1 Arial, sans-serif;
+  box-shadow: 0 6px 16px rgba(34, 45, 52, .2), inset 0 1px 0 rgba(255, 255, 255, .82);
+  backdrop-filter: blur(10px) saturate(1.15);
+  -webkit-backdrop-filter: blur(10px) saturate(1.15);
   cursor: pointer;
 }
 
@@ -730,6 +727,9 @@ h1 {
   padding-top: 4px;
   border-top: 3px solid #fff;
   order: 1;
+  min-width: 0;
+  max-width: 100%;
+  overflow-x: hidden;
 }
 
 .context-list:empty {
@@ -740,13 +740,16 @@ h1 {
 
 .context-chip {
   position: relative;
-  min-height: 43px;
-  padding: 7px 21px 7px 21px;
-  border-radius: 10px;
+  width: 100%;
+  min-width: 0;
+  max-width: 100%;
+  min-height: 42px;
+  padding: 11px 30px 10px 34px;
+  border-radius: 13px;
   background: #dedede;
   color: #898989;
-  font-size: 10px;
-  line-height: 1.15;
+  font-size: 14px;
+  line-height: 18px;
   overflow: hidden;
   cursor: pointer;
 }
@@ -754,28 +757,39 @@ h1 {
 .context-chip::before {
   content: "↳";
   position: absolute;
-  top: 7px;
-  left: 7px;
+  top: 10px;
+  left: 12px;
   color: #8c8c8c;
-  font-size: 13px;
+  font-size: 18px;
+  line-height: 1;
+}
+
+.context-chip-text {
+  display: block;
+  min-width: 0;
+  max-width: 100%;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 .remove-chip {
   position: absolute;
-  top: 4px;
-  right: 7px;
+  top: 10px;
+  right: 10px;
   border: 0;
   background: transparent;
   color: #777;
-  font-size: 12px;
+  font-size: 18px;
+  line-height: 1;
   cursor: pointer;
 }
 
 .message {
-  max-width: 266px;
-  padding: 10px 11px;
-  font-size: 14px;
-  line-height: 1.18;
+  max-width: min(72%, 680px);
+  padding: 13px 15px;
+  font-size: 15px;
+  line-height: 1.24;
   color: #1f1f1f;
   white-space: pre-wrap;
 }
@@ -784,7 +798,7 @@ h1 {
   align-self: flex-end;
   background: #e3e7fb;
   border-radius: 16px 16px 4px 16px;
-  max-width: 278px;
+  max-width: min(58%, 560px);
 }
 
 .message.bot {
@@ -795,17 +809,24 @@ h1 {
 }
 
 .mock-result {
-  align-self: flex-start;
   display: flex;
   flex-direction: column;
   gap: 7px;
-  max-width: 282px;
-  padding: 10px 12px;
+  max-width: min(72%, 760px);
+  padding: 13px 15px;
   border-radius: 16px 16px 16px 4px;
   background: #dfdfe6;
   color: #1f1f1f;
-  font-size: 12px;
-  line-height: 1.25;
+  font-size: 14px;
+  line-height: 1.28;
+}
+
+.bot-result-row {
+  align-self: flex-start;
+  display: flex;
+  align-items: flex-start;
+  gap: 7px;
+  max-width: min(80%, 840px);
 }
 
 .mock-result h4 {
@@ -876,15 +897,12 @@ h1 {
 }
 
 .evidence-row {
-  display: grid;
-  grid-template-columns: 1fr 18px;
-  gap: 5px;
-  align-items: start;
+  display: block;
 }
 
-.evidence-button {
-  width: 18px;
-  height: 18px;
+.source-highlight-button {
+  width: 24px;
+  height: 24px;
   border: 0;
   background: transparent;
   color: #8b8b8b;
@@ -892,21 +910,19 @@ h1 {
   place-items: center;
   cursor: pointer;
   padding: 0;
-  transform: translateY(-1px);
+  flex: 0 0 auto;
+  margin-top: 8px;
 }
 
-.evidence-button svg {
-  width: 15px;
-  height: 15px;
-  stroke: currentColor;
-  fill: none;
-  stroke-width: 1.7;
-  stroke-linecap: round;
-  stroke-linejoin: round;
+.source-highlight-button img {
+  width: 18px;
+  height: 18px;
+  display: block;
+  filter: brightness(0) saturate(100%) invert(60%) sepia(0%) saturate(0%) hue-rotate(151deg) brightness(92%) contrast(86%);
 }
 
-.evidence-button.active {
-  color: #a87900;
+.source-highlight-button.active img {
+  filter: brightness(0) saturate(100%) invert(67%) sepia(82%) saturate(769%) hue-rotate(359deg) brightness(96%) contrast(93%);
 }
 
 .typing-message {
@@ -1021,34 +1037,50 @@ h1 {
 
 .composer-shell {
   position: relative;
+  min-width: 0;
+  max-width: 100%;
   display: flex;
   flex-direction: column;
+  overflow: visible;
+}
+
+.prompt-enhancement-status {
+  order: 4;
+  display: none;
+  align-self: center;
+  margin: 7px 0 0;
+  text-align: center;
+  color: #1f74e6;
+  font: 700 13px/1.2 Arial, Helvetica, sans-serif;
+}
+
+.prompt-enhancement-status.visible {
+  display: block;
 }
 
 .composer {
   order: 3;
-<<<<<<< Updated upstream
-  min-height: 45px;
-  border: 1px dashed #777;
-=======
   min-width: 0;
   max-width: 100%;
   min-height: 56px;
   border: 1px solid #d8d8d8;
->>>>>>> Stashed changes
   border-radius: 13px;
   display: grid;
-  grid-template-columns: 30px 1fr 34px;
+  grid-template-columns: 34px 1fr 34px;
   grid-template-areas: "plus input send";
-  align-items: end;
-  gap: 4px;
-  padding: 6px 8px 7px;
+  align-items: center;
+  gap: 8px;
+  padding: 6px 8px;
   background: #fff;
+}
+
+.composer-shell.enhancement-active .composer {
+  border-color: #1f74e6;
 }
 
 .composer.reviewing {
   min-height: 170px;
-  grid-template-columns: 30px 1fr;
+  grid-template-columns: 34px 1fr;
   grid-template-areas:
     "input input"
     "plus actions";
@@ -1081,6 +1113,11 @@ h1 {
   grid-area: plus;
 }
 
+#plus img {
+  width: 20px;
+  height: 20px;
+}
+
 .send {
   grid-area: send;
   width: 32px;
@@ -1096,29 +1133,19 @@ h1 {
   transition: transform .12s ease, background .12s ease;
 }
 
-.send img,
-.back img {
+.send img {
   width: 18px;
   height: 18px;
   display: block;
   object-fit: contain;
 }
 
-<<<<<<< Updated upstream
-.send.arrow-right img {
-  transform: rotate(90deg);
-}
-
-.back img {
-  transform: rotate(-90deg);
-=======
 .send img {
   transform: rotate(90deg);
 }
 
 .send.arrow-right img {
   transform: rotate(180deg);
->>>>>>> Stashed changes
 }
 
 .composer.reviewing .send {
@@ -1137,23 +1164,24 @@ h1 {
   display: flex;
 }
 
-.send:hover,
-.back:hover {
+.send:hover {
   background: #c7c7c7;
   transform: translateY(-1px);
 }
 
 .prompt-input {
   grid-area: input;
+  min-width: 0;
   width: 100%;
-  min-height: 26px;
+  height: 30px;
+  min-height: 30px;
   max-height: 164px;
   resize: none;
   border: 0;
   outline: 0;
-  padding: 5px 0 1px;
+  padding: 5px 0 0;
   color: #1f1f1f;
-  font: 14px/1.16 Arial, Helvetica, sans-serif;
+  font: 16px/20px Arial, Helvetica, sans-serif;
   overflow: auto;
   scrollbar-width: thin;
 }
@@ -1185,12 +1213,12 @@ h1 {
   position: absolute;
   left: 1px;
   bottom: 51px;
-  width: 248px;
+  width: 340px;
   display: none;
   flex-direction: column;
   background: rgba(142, 142, 142, .96);
   color: #fff;
-  z-index: 8;
+  z-index: 40;
   border-radius: 13px;
   overflow: hidden;
   box-shadow: 0 8px 22px rgba(0, 0, 0, .2);
@@ -1212,10 +1240,14 @@ h1 {
   gap: 9px;
   padding: 0 12px;
   font-size: 15px;
-  font-weight: 500;
+  font-weight: 400;
   line-height: 1;
   cursor: pointer;
   text-align: left;
+}
+
+.plus-menu button span {
+  white-space: nowrap;
 }
 
 .plus-menu button:last-child {
@@ -1275,22 +1307,18 @@ h1 {
 .lens-info-panel {
   display: none;
   margin: -2px 0 8px;
-  padding: 8px 9px;
+  padding: 10px 11px;
   border-radius: 9px;
   background: #ededed;
   color: #252525;
-  font-size: 10.5px;
-  line-height: 1.22;
+  font-size: 12.5px;
+  line-height: 1.34;
 }
 
 .lens-info-panel.open {
   display: block;
 }
 
-<<<<<<< Updated upstream
-.lens-info-panel p {
-  margin: 0 0 5px;
-=======
 .lens-info-panel h4 {
   margin: 0 0 8px;
   font-size: 13.5px;
@@ -1310,7 +1338,6 @@ h1 {
 
 .lens-info-panel strong {
   color: #064f9e;
->>>>>>> Stashed changes
 }
 
 .lens-info-panel p:last-child {
@@ -1327,8 +1354,8 @@ h1 {
   list-style: none;
   margin: 0 0 4px;
   padding: 0 0 0 2px;
-  font-size: 14px;
-  line-height: 1.16;
+  font-size: 15px;
+  line-height: 1.2;
 }
 
 .guard-options li {
@@ -1338,21 +1365,10 @@ h1 {
 .guard-options label {
   display: flex;
   align-items: center;
-  gap: 5px;
+  gap: 8px;
   cursor: pointer;
 }
 
-<<<<<<< Updated upstream
-.guard-options input {
-  appearance: none;
-  width: 10px;
-  height: 10px;
-  border: 1px dashed #555;
-  border-radius: 1px;
-  display: inline-grid;
-  place-items: center;
-  margin: 0;
-=======
 .guard-options .locked-option label {
   color: #8d8d8d;
   cursor: default;
@@ -1380,16 +1396,10 @@ h1 {
 .guard-options input[type="checkbox"]:checked {
   border-color: #1f74e6;
   background: #1f74e6;
->>>>>>> Stashed changes
 }
 
 .guard-options input[type="checkbox"]:checked::after {
   content: "✓";
-<<<<<<< Updated upstream
-  font-size: 11px;
-  color: #333;
-  transform: translateY(-1px);
-=======
   font-size: 16px;
   font-weight: 800;
   line-height: 1;
@@ -1401,7 +1411,6 @@ h1 {
   border-color: #aaa;
   background: #d5d5d5;
   cursor: not-allowed;
->>>>>>> Stashed changes
 }
 
 .guard-options .custom-option {
@@ -1417,11 +1426,7 @@ h1 {
 .custom-lens {
   width: 216px;
   height: 20px;
-<<<<<<< Updated upstream
-  margin-left: 27px;
-=======
   margin-left: 0;
->>>>>>> Stashed changes
   border: 1px solid #b5b5b5;
   padding: 1px 4px;
   font-size: 13px;
@@ -1432,25 +1437,20 @@ h1 {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  margin-top: 4px;
+  margin-top: 7px;
 }
 
-.back {
+.guard-back {
+  width: 32px;
+  height: 26px;
   border: 0;
-  width: 31px;
-  height: 31px;
-  border-radius: 50%;
-  background: #d7d7d7;
-  color: #151515;
+  background: transparent;
+  color: #333;
   display: grid;
   place-items: center;
-  font-size: 21px;
-  font-weight: 700;
-  line-height: 1;
+  font: 700 26px/1 Arial, Helvetica, sans-serif;
   cursor: pointer;
   padding: 0;
-  box-shadow: 0 1px 3px rgba(0, 0, 0, .15);
-  transition: transform .12s ease, background .12s ease;
 }
 
 .guard-back img {
@@ -1462,22 +1462,21 @@ h1 {
 
 .apply {
   min-width: 42px;
-  height: 16px;
+  height: 22px;
   border: 0;
-  border-radius: 5px;
+  border-radius: 7px;
   background: #9d9d9d;
   color: #fff;
-  font-size: 10px;
+  font-size: 13px;
+  font-weight: 700;
   cursor: pointer;
-  padding: 0 7px;
+  padding: 0 10px;
 }
 
 .apply.enabled {
   background: #1f74e6;
 }
 
-<<<<<<< Updated upstream
-=======
 .workspace-body {
   height: 100%;
   display: grid;
@@ -1950,21 +1949,26 @@ h1 {
   background: #fff;
 }
 
->>>>>>> Stashed changes
 @media (max-width: 1120px) {
   .stage,
   .stage.chat-hidden {
-    grid-template-columns: minmax(0, 1fr);
-    padding: 28px 18px 30px;
+    padding: 0;
   }
 
-  .editor-shell,
-  .chat {
-    width: 100%;
-    max-height: none;
+  .workspace-body {
+    grid-template-columns: 74px minmax(0, 1fr);
+    grid-template-rows: minmax(420px, 1fr) minmax(420px, 1fr);
   }
 
-  .chat {
-    height: 580px;
+  .file-sidebar {
+    display: none;
+  }
+
+  .source-column {
+    grid-column: 2;
+  }
+
+  .right-pane {
+    grid-column: 1 / -1;
   }
 }
