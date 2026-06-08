@@ -177,8 +177,14 @@
       return clean.length > max ? `${clean.slice(0, max)} ...` : clean;
     }
 
-    function canAddContext() {
-      return textMode.classList.contains("active") && sourcePane.style.display !== "none";
+    function canAddSourceContext() {
+      return sourcePane.style.display !== "none";
+    }
+
+    function canAddPreviewContext() {
+      return rightPane.classList.contains("pdf-mode")
+        && previewPane.style.display !== "none"
+        && compiledPaper.style.display !== "none";
     }
 
     function getTextareaCaretPoint(textarea, index) {
@@ -223,7 +229,7 @@
     }
 
     function updateSelectedText() {
-      if (!canAddContext()) {
+      if (!canAddSourceContext()) {
         addContext.style.display = "none";
         return;
       }
@@ -255,22 +261,17 @@
     window.addEventListener("resize", updateEditorView);
 
     document.addEventListener("selectionchange", () => {
-      if (!canAddContext()) {
-        addContext.style.display = "none";
-        return;
-      }
       if (document.activeElement === latexInput) {
         updateSelectedText();
         return;
       }
-      if (sourcePane.style.display !== "none") return;
       const selection = window.getSelection();
       if (!selection || selection.rangeCount === 0 || selection.isCollapsed) {
         addContext.style.display = "none";
         return;
       }
       const range = selection.getRangeAt(0);
-      if (!compiledPaper.contains(range.commonAncestorContainer)) {
+      if (!canAddPreviewContext() || !compiledPaper.contains(range.commonAncestorContainer)) {
         addContext.style.display = "none";
         return;
       }
