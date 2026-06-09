@@ -72,7 +72,7 @@ const initialLatex = `\\documentclass{article}
 \\title{FocusFlow: An Adaptive AI System Minimizing Digital Distractions via Real-time Eye-tracking}
 \\author{Junseo Jang, Seohyun Kang, Jiyeon Park, Chaeyoung Huh, Jiho Lee}
 
-\begin{document}
+\\begin{document}
 
 \\maketitle
 
