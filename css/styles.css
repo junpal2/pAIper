@@ -292,7 +292,10 @@ h1 {
 }
 
 @keyframes dotPulse {
-  0%, 80%, 100% {
+
+  0%,
+  80%,
+  100% {
     background: #b8bec3;
   }
 
@@ -577,21 +580,28 @@ h1 {
 
 .add-context {
   position: fixed;
-  z-index: 30;
+  z-index: 9999;
   display: none;
   align-items: center;
-  gap: 5px;
-  height: 30px;
-  padding: 0 13px;
-  border: 1.25px solid rgba(47, 63, 74, .82);
+  justify-content: center;
+  gap: 6px;
+  min-width: 120px;
+  height: 34px;
+  padding: 0 14px;
+  border: 1px solid rgba(47, 63, 74, .9);
   border-radius: 999px;
-  background: rgba(244, 247, 249, .72);
+  background: rgba(255, 255, 255, .95);
+  box-shadow: 0 14px 30px rgba(0, 0, 0, .14);
   color: #202020;
   font: 700 14px/1 Arial, sans-serif;
-  box-shadow: 0 6px 16px rgba(34, 45, 52, .2), inset 0 1px 0 rgba(255, 255, 255, .82);
-  backdrop-filter: blur(10px) saturate(1.15);
-  -webkit-backdrop-filter: blur(10px) saturate(1.15);
   cursor: pointer;
+  user-select: none;
+  touch-action: manipulation;
+  backdrop-filter: blur(12px);
+}
+
+.add-context:hover {
+  transform: translateY(-1px);
 }
 
 .chat {
@@ -725,7 +735,7 @@ h1 {
   gap: 4px;
   margin: 4px 0 6px;
   padding-top: 4px;
-  border-top: 3px solid #fff;
+  border-top: 0;
   order: 1;
   min-width: 0;
   max-width: 100%;
@@ -960,8 +970,18 @@ h1 {
 }
 
 @keyframes typingPulse {
-  0%, 80%, 100% { opacity: .25; transform: translateY(0); }
-  40% { opacity: 1; transform: translateY(-2px); }
+
+  0%,
+  80%,
+  100% {
+    opacity: .25;
+    transform: translateY(0);
+  }
+
+  40% {
+    opacity: 1;
+    transform: translateY(-2px);
+  }
 }
 
 .lens-validation {
@@ -1950,6 +1970,7 @@ h1 {
 }
 
 @media (max-width: 1120px) {
+
   .stage,
   .stage.chat-hidden {
     padding: 0;
