@@ -45,6 +45,7 @@
       if (!validateLensSelection()) return;
       applyLensRewrite();
       safetyLensVisited = true;
+      initialOptionsApplied = true;
       setPromptEnhancementActive(true);
       guardPanel.classList.remove("open");
       openReviewCard(rewrittenPrompt);
@@ -55,15 +56,61 @@
       sent = false;
       if (chatFlowState !== "lens") {
         setComposerReviewMode(false);
-        chatFlowState = safetyLensVisited ? "ready" : "compose";
+        chatFlowState = "compose";
         originalPrompt = "";
         rewrittenPrompt = "";
         if (!safetyLensVisited) {
           resetLensChecks();
         }
       }
-      setSendArrow(safetyLensVisited ? "up" : "right");
+      // If lenses have been applied previously, new edits should require
+      // a quick review before sending. Show the right-arrow (review)
+      // when the current prompt differs from the last sent prompt.
+      if (safetyLensVisited) {
+        const current = promptBox.value.trim();
+        if (current && current !== (lastSentPrompt || "")) setSendArrow("right");
+        else setSendArrow("up");
+      } else {
+        setSendArrow("right");
+      }
       autoSizePrompt();
+    });
+
+    sendButton.addEventListener("click", () => {
+      showChat();
+      composerShell.style.display = "flex";
+      if (!promptBox.value.trim()) {
+        promptBox.focus();
+        autoSizePrompt();
+        return;
+      }
+      if (chatFlowState === "compose" && !initialOptionsApplied) {
+        openLensOptions();
+        return;
+      }
+      if (chatFlowState === "compose" && initialOptionsApplied) {
+        originalPrompt = promptBox.value.trim() || userPrompt;
+        applyLensRewrite();
+        openReviewCard(rewrittenPrompt);
+        chatFlowState = "review";
+        setSendArrow("up");
+        return;
+      }
+      if (chatFlowState === "lens") {
+        if (!validateLensSelection()) return;
+        applyLensRewrite();
+        safetyLensVisited = true;
+        initialOptionsApplied = true;
+        setPromptEnhancementActive(true);
+        guardPanel.classList.remove("open");
+        openReviewCard(rewrittenPrompt);
+        setSendArrow("up");
+        return;
+      }
+      if (chatFlowState === "review") {
+        return;
+      }
+      sendPrompt();
     });
 
     function autoSizePrompt() {
@@ -370,34 +417,6 @@
       applyCitationHighlight();
     }
 
-    sendButton.addEventListener("click", () => {
-      showChat();
-      composerShell.style.display = "flex";
-      if (!promptBox.value.trim()) {
-        promptBox.focus();
-        autoSizePrompt();
-        return;
-      }
-      if (chatFlowState === "compose" && !safetyLensVisited) {
-        openLensOptions();
-        return;
-      }
-      if (chatFlowState === "lens") {
-        if (!validateLensSelection()) return;
-        applyLensRewrite();
-        safetyLensVisited = true;
-        setPromptEnhancementActive(true);
-        guardPanel.classList.remove("open");
-        openReviewCard(rewrittenPrompt);
-        setSendArrow("up");
-        return;
-      }
-      if (chatFlowState === "review") {
-        return;
-      }
-      sendPrompt();
-    });
-
     function openLensOptions() {
       closePlusMenu();
       guardTip.style.display = "none";
@@ -447,6 +466,7 @@
       rewrittenPrompt = promptBox.value;
       originalPrompt = "";
       safetyLensVisited = true;
+      initialOptionsApplied = true;
       chatFlowState = "ready";
       setPromptEnhancementActive(true);
       setComposerReviewMode(false);
@@ -458,11 +478,11 @@
     declineRewrite.addEventListener("click", () => {
       promptBox.value = originalPrompt || "";
       rewrittenPrompt = "";
-      resetLensChecks();
       lensValidation.style.display = "none";
       safetyLensVisited = true;
+      initialOptionsApplied = true;
       chatFlowState = "ready";
-      setPromptEnhancementActive(true);
+      setPromptEnhancementActive(false);
       setComposerReviewMode(false);
       setSendArrow("up");
       autoSizePrompt();
@@ -680,6 +700,7 @@
       answerShown = false;
       isGeneratingAnswer = false;
       safetyLensVisited = false;
+      initialOptionsApplied = false;
       chatFlowState = "compose";
       originalPrompt = "";
       rewrittenPrompt = "";
@@ -720,6 +741,7 @@
       answerShown = Boolean(currentMessages.length);
       isGeneratingAnswer = false;
       safetyLensVisited = true;
+      initialOptionsApplied = true;
       chatFlowState = "compose";
       originalPrompt = "";
       rewrittenPrompt = "";

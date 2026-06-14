@@ -125,6 +125,7 @@ let sent = false;
 let answerShown = false;
 let isGeneratingAnswer = false;
 let safetyLensVisited = false;
+let initialOptionsApplied = false;
 let chatFlowState = "compose";
 let originalPrompt = "";
 let rewrittenPrompt = "";
